@@ -1,0 +1,34 @@
+<svg width="180" height="180" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="180" height="180" rx="45" fill="url(#paint0_radial)"/>
+  
+  <!-- OSI Layers (7 concentric arcs) -->
+  <!-- Layer 7: Application - Purple -->
+  <path d="M90 30C56.863 30 30 56.863 30 90C30 123.137 56.863 150 90 150" stroke="#9333EA" stroke-width="8" stroke-linecap="round"/>
+  
+  <!-- Layer 6: Presentation - Indigo -->
+  <path d="M90 42C63.49 42 42 63.49 42 90C42 116.51 63.49 138 90 138" stroke="#6366F1" stroke-width="8" stroke-linecap="round"/>
+  
+  <!-- Layer 5: Session - Blue -->
+  <path d="M90 54C70.118 54 54 70.118 54 90C54 109.882 70.118 126 90 126" stroke="#3B82F6" stroke-width="8" stroke-linecap="round"/>
+  
+  <!-- Layer 4: Transport - Green -->
+  <path d="M90 66C76.745 66 66 76.745 66 90C66 103.255 76.745 114 90 114" stroke="#10B981" stroke-width="8" stroke-linecap="round"/>
+  
+  <!-- Layer 3: Network - Yellow -->
+  <path d="M90 78C83.373 78 78 83.373 78 90C78 96.627 83.373 102 90 102" stroke="#FBBF24" stroke-width="8" stroke-linecap="round"/>
+  
+  <!-- Layer 2: Data Link - Orange -->
+  <path d="M90 84C86.686 84 84 86.686 84 90C84 93.314 86.686 96 90 96" stroke="#F97316" stroke-width="8" stroke-linecap="round"/>
+  
+  <!-- Layer 1: Physical - Red (Center dot) -->
+  <circle cx="90" cy="90" r="4" fill="#EF4444"/>
+  
+  <!-- Gradient Definitions -->
+  <defs>
+    <radialGradient id="paint0_radial" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(90 90) rotate(90) scale(90)">
+      <stop offset="0" stop-color="#1E293B"/>
+      <stop offset="1" stop-color="#0F172A"/>
+    </radialGradient>
+  </defs>
+</svg> 

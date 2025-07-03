@@ -1,0 +1,339 @@
+@import "tailwindcss";
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+}
+
+/* Layer highlight animation */
+.layer-highlight {
+  animation: pulse-highlight 2s infinite;
+}
+
+@keyframes pulse-highlight {
+  0% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+  }
+}
+
+/* Data transmission animation */
+@keyframes transmit {
+  0% {
+    width: 0;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+.animate-transmit {
+  animation: transmit 2s linear forwards;
+}
+
+.animate-transmit-fast {
+  animation: transmit 1s linear forwards;
+}
+
+.animate-transmit-slow {
+  animation: transmit 3s linear forwards;
+}
+
+/* Pulse animations for signals */
+@keyframes pulse-fast {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.animate-pulse-fast {
+  animation: pulse-fast 0.5s infinite;
+}
+
+@keyframes pulse-slow {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 2s infinite;
+}
+
+/* Light pulse animation for fiber */
+@keyframes light-pulse {
+  0% {
+    opacity: 0.2;
+    transform: translateX(0);
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.2;
+    transform: translateX(100px);
+  }
+}
+
+.animate-light-pulse {
+  animation: light-pulse 1.5s infinite;
+}
+
+/* Wireless wave animation */
+@keyframes wave {
+  0% {
+    transform: translate(-50%, -50%) scale(0.5);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(2);
+    opacity: 0;
+  }
+}
+
+.animate-wave {
+  animation: wave 2s infinite;
+  transform-origin: center;
+}
+
+/* Interference animation */
+@keyframes interference {
+  0% {
+    opacity: 0.2;
+    transform: translateY(-50%) scale(0.8);
+  }
+  50% {
+    opacity: 0.7;
+    transform: translateY(-50%) scale(1.2);
+  }
+  100% {
+    opacity: 0.2;
+    transform: translateY(-50%) scale(0.8);
+  }
+}
+
+.animate-interference {
+  animation: interference 3s infinite;
+}
+
+/* Custom Form Elements */
+/* Custom checkbox and radio styling */
+.custom-checkbox {
+  @apply relative flex items-center justify-center;
+}
+
+.custom-checkbox input {
+  @apply sr-only;
+}
+
+.custom-checkbox .checkbox-icon {
+  @apply w-5 h-5 rounded border-2 transition-all duration-200 flex items-center justify-center;
+}
+
+.custom-checkbox input:checked + .checkbox-icon {
+  @apply bg-blue-500 border-blue-500 dark:bg-blue-600 dark:border-blue-600;
+}
+
+.custom-checkbox input:not(:checked) + .checkbox-icon {
+  @apply border-gray-300 dark:border-gray-500;
+}
+
+.custom-checkbox:hover input:not(:checked) + .checkbox-icon {
+  @apply border-blue-400 dark:border-blue-400;
+}
+
+.custom-radio {
+  @apply relative flex items-center justify-center;
+}
+
+.custom-radio input {
+  @apply sr-only;
+}
+
+.custom-radio .radio-icon {
+  @apply w-5 h-5 rounded-full border-2 transition-all duration-200 flex items-center justify-center;
+}
+
+.custom-radio input:checked + .radio-icon {
+  @apply border-blue-500 dark:border-blue-600;
+}
+
+.custom-radio input:checked + .radio-icon:after {
+  content: '';
+  @apply w-3 h-3 rounded-full bg-blue-500 dark:bg-blue-600;
+}
+
+.custom-radio input:not(:checked) + .radio-icon {
+  @apply border-gray-300 dark:border-gray-500;
+}
+
+.custom-radio:hover input:not(:checked) + .radio-icon {
+  @apply border-blue-400 dark:border-blue-400;
+}
+
+/* Custom slider styling */
+.custom-slider {
+  @apply relative w-full appearance-none bg-transparent cursor-pointer z-10 outline-none;
+  height: 18px; /* Match thumb height for proper alignment */
+  margin: 0;
+  padding: 0;
+  padding-top: 20px;
+}
+
+.custom-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  @apply w-[18px] h-[18px] rounded-full bg-white dark:bg-gray-800 border-2 border-blue-500 dark:border-blue-400 shadow-md cursor-pointer transition-transform;
+  margin-top: -8px; /* Center thumb on track: (thumb height - track height) / 2 */
+}
+
+.custom-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+}
+
+.custom-slider::-moz-range-thumb {
+  @apply w-[18px] h-[18px] rounded-full bg-white dark:bg-gray-800 border-2 border-blue-500 dark:border-blue-400 shadow-md cursor-pointer transition-transform;
+}
+
+.custom-slider::-moz-range-thumb:hover {
+  transform: scale(1.1);
+}
+
+.custom-slider::-webkit-slider-runnable-track {
+  @apply h-1 w-full rounded-full bg-transparent;
+}
+
+.custom-slider::-moz-range-track {
+  @apply h-1 w-full rounded-full bg-transparent;
+}
+
+.slider-track {
+  @apply absolute inset-0 flex items-center;
+  pointer-events: none;
+}
+
+.slider-track-inner {
+  @apply h-1 w-full bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full;
+}
+
+/* Custom button animations */
+.btn-hover-effect {
+  @apply relative overflow-hidden;
+}
+
+.btn-hover-effect:after {
+  content: '';
+  @apply absolute inset-0 bg-white opacity-0 transition-opacity;
+}
+
+.btn-hover-effect:hover:after {
+  @apply opacity-20;
+}
+
+.btn-hover-effect:active:after {
+  @apply opacity-30;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Dark mode scrollbar */
+@media (prefers-color-scheme: dark) {
+  ::-webkit-scrollbar-track {
+    background: #333;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: #666;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: #888;
+  }
+}
+
+/* Animation utilities */
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 8s linear infinite;
+}
+
+/* Custom focus styles */
+.focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900;
+}
