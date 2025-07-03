@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import OSILayer from "./OSILayer";
 import { processMessage } from "../utils/osiUtils";
 import TransmissionMedia from "./TransmissionMedia";
@@ -65,11 +65,45 @@ const transmissionMediaTypes = [
   { id: "wireless", name: "Wireless", speed: "450+ Mbps", reliability: "Medium", range: "30-100m", description: "Uses radio waves through air" }
 ];
 
+// Define simulation data type
+interface SimulationData {
+  originalMessage: string;
+  layers: {
+    [key: number]: {
+      sending: {
+        data: string;
+        protocols: string;
+        processes: string[];
+        rawData?: string;
+        addedData?: string;
+        finalData?: string;
+        binaryRepresentation?: string;
+        signalPattern?: string;
+        handshakeData?: {
+          syn: string;
+          synAck: string;
+          ack: string;
+        };
+      };
+      receiving: {
+        data: string;
+        protocols: string;
+        processes: string[];
+        rawData?: string;
+        addedData?: string;
+        finalData?: string;
+        binaryRepresentation?: string;
+        signalPattern?: string;
+      };
+    };
+  };
+}
+
 export default function OSISimulator() {
   const [userMessage, setUserMessage] = useState("");
   const [simulationActive, setSimulationActive] = useState(false);
   const [simulationStep, setSimulationStep] = useState(0);
-  const [simulationData, setSimulationData] = useState<any>(null);
+  const [simulationData, setSimulationData] = useState<SimulationData | null>(null);
   const [simulationDirection, setSimulationDirection] = useState<"sending" | "receiving">("sending");
   const [showConnectionSetup, setShowConnectionSetup] = useState(false);
   const [showOSIInfo, setShowOSIInfo] = useState(false);
@@ -86,57 +120,13 @@ export default function OSISimulator() {
   // Reference for the simulation container for scrolling
   const simulationContainerRef = useRef<HTMLDivElement>(null);
 
-  // Handle keyboard navigation
-  useEffect(() => {
-    const handleKeyPress = (event: KeyboardEvent) => {
-      if (!simulationActive) return;
-      
-      if (event.key === 'ArrowRight') {
-        event.preventDefault();
-        handleNextStep();
-      } else if (event.key === 'ArrowLeft') {
-        event.preventDefault();
-        handlePreviousStep();
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyPress);
-    return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [simulationActive, simulationStep, simulationDirection]);
-
-  // Handle auto-stepping
-  useEffect(() => {
-    if (simulationActive && autoStep && !isPaused) {
-      // Clear any existing interval
-      if (autoStepIntervalRef.current) {
-        clearInterval(autoStepIntervalRef.current);
-      }
-      
-      // Set new interval for auto-stepping
-      autoStepIntervalRef.current = setInterval(() => {
-        handleNextStep();
-      }, stepDelay);
-    } else if (autoStepIntervalRef.current) {
-      // Clear interval if simulation is not active or auto-step is disabled
-      clearInterval(autoStepIntervalRef.current);
-      autoStepIntervalRef.current = null;
-    }
-    
-    // Cleanup on component unmount
-    return () => {
-      if (autoStepIntervalRef.current) {
-        clearInterval(autoStepIntervalRef.current);
-      }
-    };
-  }, [simulationActive, autoStep, simulationStep, simulationDirection, isPaused, stepDelay]);
-
   // Get binary data for transmission visualization
   const getPhysicalLayerBinaryData = () => {
     if (!simulationData || !simulationData.layers || !simulationData.layers[1]) {
-      return null;
+      return "";
     }
     
-    return simulationData.layers[1].sending.binaryRepresentation || null;
+    return simulationData.layers[1].sending.binaryRepresentation || "";
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -159,7 +149,7 @@ export default function OSISimulator() {
     }
   };
 
-  const handleNextStep = () => {
+  const handleNextStep = useCallback(() => {
     if (simulationDirection === "sending") {
       if (simulationStep < osiLayers.length - 1) {
         setSimulationStep(simulationStep + 1);
@@ -198,9 +188,9 @@ export default function OSISimulator() {
         setShowConnectionSetup(true);
       }
     }
-  };
+  }, [simulationDirection, simulationStep, selectedMedia]);
 
-  const handlePreviousStep = () => {
+  const handlePreviousStep = useCallback(() => {
     if (simulationDirection === "sending") {
       if (simulationStep > 0) {
         setSimulationStep(simulationStep - 1);
@@ -229,7 +219,51 @@ export default function OSISimulator() {
         }, transmissionTime);
       }
     }
-  };
+  }, [simulationDirection, simulationStep, selectedMedia]);
+
+  // Handle keyboard navigation
+  useEffect(() => {
+    const handleKeyPress = (event: KeyboardEvent) => {
+      if (!simulationActive) return;
+      
+      if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        handleNextStep();
+      } else if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        handlePreviousStep();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [simulationActive, handleNextStep, handlePreviousStep]);
+
+  // Handle auto-stepping
+  useEffect(() => {
+    if (simulationActive && autoStep && !isPaused) {
+      // Clear any existing interval
+      if (autoStepIntervalRef.current) {
+        clearInterval(autoStepIntervalRef.current);
+      }
+      
+      // Set new interval for auto-stepping
+      autoStepIntervalRef.current = setInterval(() => {
+        handleNextStep();
+      }, stepDelay);
+    } else if (autoStepIntervalRef.current) {
+      // Clear interval if simulation is not active or auto-step is disabled
+      clearInterval(autoStepIntervalRef.current);
+      autoStepIntervalRef.current = null;
+    }
+    
+    // Cleanup on component unmount
+    return () => {
+      if (autoStepIntervalRef.current) {
+        clearInterval(autoStepIntervalRef.current);
+      }
+    };
+  }, [simulationActive, autoStep, isPaused, stepDelay, handleNextStep]);
 
   const resetSimulation = () => {
     setSimulationActive(false);
@@ -254,10 +288,6 @@ export default function OSISimulator() {
   const handleSpeedChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newDelay = parseInt(e.target.value);
     setStepDelay(newDelay);
-  };
-
-  const handleMediaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedMedia(e.target.value);
   };
 
   // Get the current layer name
@@ -369,7 +399,7 @@ export default function OSISimulator() {
                     <p className="font-medium text-xs">ACK</p>
                     <p className="text-xs text-gray-600 dark:text-gray-400">{handshakeData.ack}</p>
                     <p className="text-xs mt-1 text-blue-600 dark:text-blue-400">Flags: SYN=0, ACK=1</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Acknowledges receiver's sequence</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Acknowledges receiver&apos;s sequence</p>
                   </div>
                 </div>
                 <div className="w-2/12 flex justify-center">

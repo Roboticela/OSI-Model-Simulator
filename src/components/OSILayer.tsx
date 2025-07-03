@@ -14,7 +14,38 @@ interface OSILayerProps {
   active: boolean;
   currentStep: number;
   direction: "sending" | "receiving";
-  data: any;
+  data: {
+    originalMessage: string;
+    layers: {
+      [key: number]: {
+        sending: {
+          data: string;
+          protocols: string;
+          processes: string[];
+          rawData?: string;
+          addedData?: string;
+          finalData?: string;
+          binaryRepresentation?: string;
+          signalPattern?: string;
+          handshakeData?: {
+            syn: string;
+            synAck: string;
+            ack: string;
+          };
+        };
+        receiving: {
+          data: string;
+          protocols: string;
+          processes: string[];
+          rawData?: string;
+          addedData?: string;
+          finalData?: string;
+          binaryRepresentation?: string;
+          signalPattern?: string;
+        };
+      };
+    };
+  } | null;
   showDetailedView: boolean;
   mediaType?: string;
 }

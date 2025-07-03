@@ -51,7 +51,7 @@ export default function Terms() {
           <section className="mt-8">
             <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4">Use License</h2>
             <p>
-              Permission is granted to temporarily access the materials on OSI Model Simulator's website for personal, 
+              Permission is granted to temporarily access the materials on OSI Model Simulator&apos;s website for personal, 
               non-commercial, educational use only. This is the grant of a license, not a transfer of title, and under this license you may not:
             </p>
             <ul className="list-disc pl-6 mt-3 space-y-2">
@@ -59,14 +59,14 @@ export default function Terms() {
               <li>Use the materials for any commercial purpose</li>
               <li>Attempt to reverse engineer any software contained on the website</li>
               <li>Remove any copyright or other proprietary notations from the materials</li>
-              <li>Transfer the materials to another person or "mirror" the materials on any other server</li>
+              <li>Transfer the materials to another person or &quot;mirror&quot; the materials on any other server</li>
             </ul>
           </section>
           
           <section className="mt-8">
             <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4">Disclaimer</h2>
             <p>
-              The materials on OSI Model Simulator's website are provided on an 'as is' basis. 
+              The materials on OSI Model Simulator&apos;s website are provided on an &apos;as is&apos; basis. 
               OSI Model Simulator makes no warranties, expressed or implied, and hereby disclaims and negates 
               all other warranties including, without limitation, implied warranties or conditions of merchantability, 
               fitness for a particular purpose, or non-infringement of intellectual property or other violation of rights.
@@ -97,7 +97,7 @@ export default function Terms() {
             <p>
               OSI Model Simulator has not reviewed all of the sites linked to its website and is not responsible for the contents of any such linked site. 
               The inclusion of any link does not imply endorsement by OSI Model Simulator of the site. 
-              Use of any such linked website is at the user's own risk.
+              Use of any such linked website is at the user&apos;s own risk.
             </p>
           </section>
           

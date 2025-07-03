@@ -91,24 +91,6 @@ function stringToBinary(str: string): string {
 }
 
 /**
- * Convert binary to string
- */
-function binaryToString(binary: string): string {
-  // Remove spaces if they exist
-  const cleanBinary = binary.replace(/\s/g, '');
-  
-  // Convert 8 bits at a time to characters
-  let result = '';
-  for (let i = 0; i < cleanBinary.length; i += 8) {
-    const byte = cleanBinary.substr(i, 8);
-    if (byte.length === 8) {
-      result += String.fromCharCode(parseInt(byte, 2));
-    }
-  }
-  return result;
-}
-
-/**
  * Generate data for each layer based on the message
  */
 function generateLayerData(
@@ -564,38 +546,28 @@ function generateWirelessSignalPattern(binaryData: string): string {
 
 // Encode a message (simulate Base64 + encryption)
 function encodeMessage(message: string): string {
-  // Simple Base64-like encoding for demonstration
   try {
-    // For browser environment
-    return btoa(message) + ".TLS1.3.Encrypted";
-  } catch (e) {
-    // Fallback for non-browser environments
-    const base64Chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-    let result = '';
-    
-    // Simple character substitution to simulate encoding
-    for (let i = 0; i < message.length; i++) {
-      const charCode = message.charCodeAt(i);
-      const index = charCode % 64;
-      result += base64Chars[index];
-    }
-    
-    return result + ".TLS1.3.Encrypted";
+    // Simple base64-like encoding for demonstration
+    return btoa(message);
+  } catch {
+    // Fallback for non-ASCII characters
+    return `[Encoded: ${message}]`;
   }
 }
 
 // Decode a message
 function decodeMessage(message: string): string {
-  // Remove the encryption indicator
-  const encodedPart = message.replace(".TLS1.3.Encrypted", "");
-  
   try {
-    // For browser environment
-    return atob(encodedPart);
-  } catch (e) {
-    // If the message wasn't actually encoded or we're not in a browser
-    // Just return the original message without the encryption indicator
-    return message.replace(".TLS1.3.Encrypted", "");
+    // Try to decode if it's base64
+    if (message.match(/^[A-Za-z0-9+/=]+$/)) {
+      return atob(message);
+    }
+    // If not base64, extract from our custom format
+    const match = message.match(/\[Encoded: (.*)\]/);
+    if (match) return match[1];
+    return message;
+  } catch {
+    return message;
   }
 }
 
@@ -650,12 +622,6 @@ function extractPacketData(packetData: string): string {
 function createFrame(data: string): string {
   // Add frame information
   return `[FRM:${(Date.now() % 1000).toString(16).padStart(4, '0')}]${data}`;
-}
-
-// Extract frame data
-function extractFrameData(frameData: string): string {
-  // Remove frame indicators
-  return frameData.replace(/\[FRM:[0-9a-f]+\]/g, '');
 }
 
 // Calculate CRC for error detection

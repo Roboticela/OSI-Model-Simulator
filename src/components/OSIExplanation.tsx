@@ -97,7 +97,7 @@ export default function OSIExplanation({ isOpen, onClose }: OSIExplanationProps)
               
               <h3 className="text-lg font-semibold mt-6">OSI vs. TCP/IP Model</h3>
               <p>
-                While the OSI model is theoretical, the TCP/IP model is the practical implementation used in today's internet. TCP/IP consolidates several OSI layers:
+                While the OSI model is theoretical, the TCP/IP model is the practical implementation used in today&apos;s internet. TCP/IP consolidates several OSI layers:
               </p>
               <div className="grid grid-cols-2 gap-4 mt-2">
                 <div className="border rounded p-3">
@@ -129,7 +129,7 @@ export default function OSIExplanation({ isOpen, onClose }: OSIExplanationProps)
             <div className="space-y-6">
               <div className="border-l-4 border-purple-500 pl-4 py-2">
                 <h3 className="text-lg font-semibold">Layer 7: Application</h3>
-                <p className="mt-1">The interface between the user's application and the network.</p>
+                <p className="mt-1">The interface between the user&apos;s application and the network.</p>
                 <ul className="list-disc pl-5 mt-2">
                   <li><strong>Functions:</strong> High-level APIs, resource sharing, remote file access</li>
                   <li><strong>Protocols:</strong> HTTP, SMTP, FTP, DNS, DHCP, Telnet</li>

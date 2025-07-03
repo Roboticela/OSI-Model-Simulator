@@ -8,13 +8,10 @@ interface TransmissionMediaProps {
 }
 
 export default function TransmissionMedia({ mediaType, binaryData }: TransmissionMediaProps) {
-  const [transmitting, setTransmitting] = useState(false);
   const [progress, setProgress] = useState(0);
   
   // Start transmission animation
   useEffect(() => {
-    setTransmitting(true);
-    
     // Set up progress animation
     const duration = mediaType === "fiber" ? 1000 : mediaType === "wireless" ? 3000 : 2000;
     const interval = 50; // Update every 50ms
