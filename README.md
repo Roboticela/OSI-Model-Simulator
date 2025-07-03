@@ -20,6 +20,9 @@
   <a href="https://roboticela.com"><strong>Explore Roboticela »</strong></a>
   
   <br>
+  
+  <a href="http://osi-model-simulator.roboticela.com/"><strong>Visit OSI Model Simulator »</strong></a>
+  
   <br>
   
   <a href="#demo">View Demo</a>
