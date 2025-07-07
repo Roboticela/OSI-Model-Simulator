@@ -57,42 +57,35 @@ export default function OSILayer({ layer, active, currentStep, direction, data, 
     (direction === "sending" && layer.id === 7 - currentStep) || 
     (direction === "receiving" && layer.id === 7 - currentStep);
     
-  // Reference for auto-scrolling
   const layerRef = useRef<HTMLDivElement>(null);
   
-  // We're now using the scrolling functionality from OSISimulator.tsx instead
-  // Keeping the ref for potential future use
   useEffect(() => {
-    // Removed auto-scrolling from here as it's now handled by the parent component
   }, [isCurrentLayer, currentStep, direction]);
 
-  // Get appropriate icons based on layer
   const getLayerIcon = () => {
     switch (layer.id) {
-      case 7: return "📱"; // Application
-      case 6: return "🔄"; // Presentation
-      case 5: return "🔗"; // Session
-      case 4: return "🚚"; // Transport
-      case 3: return "🌐"; // Network
-      case 2: return "🔍"; // Data Link
-      case 1: return "⚡"; // Physical
+      case 7: return "📱"; 
+      case 6: return "🔄"; 
+      case 5: return "🔗"; 
+      case 4: return "🚚"; 
+      case 3: return "🌐"; 
+      case 2: return "🔍"; 
+      case 1: return "⚡"; 
       default: return "📋";
     }
   };
 
-  // Get media-specific icon for physical layer
   const getMediaIcon = () => {
     if (layer.id !== 1) return null;
     
     switch (mediaType) {
-      case "cable": return "🔌"; // Copper cable
-      case "fiber": return "💡"; // Optical fiber
-      case "wireless": return "📶"; // Wireless
-      default: return "⚡"; // Default
+      case "cable": return "🔌"; 
+      case "fiber": return "💡"; 
+      case "wireless": return "📶"; 
+      default: return "⚡"; 
     }
   };
 
-  // Render signal pattern visualization
   const renderSignalPattern = () => {
     if (layer.id !== 1 || !layerData?.signalPattern) return null;
     
@@ -113,7 +106,6 @@ export default function OSILayer({ layer, active, currentStep, direction, data, 
     );
   };
 
-  // Render TCP handshake visualization
   const renderHandshake = () => {
     if (layer.id !== 4 || direction !== "sending" || !layerData?.handshakeData) return null;
     
@@ -155,7 +147,6 @@ export default function OSILayer({ layer, active, currentStep, direction, data, 
     );
   };
 
-  // Simple view for layer
   const renderSimpleView = () => {
     if (!active || !layerData) return null;
     
@@ -213,7 +204,6 @@ export default function OSILayer({ layer, active, currentStep, direction, data, 
     );
   };
 
-  // Detailed view for layer
   const renderDetailedView = () => {
     if (!active || !layerData) return null;
     

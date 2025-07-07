@@ -1,14 +1,11 @@
-// OSI Model Utility Functions
-
-// Interface for layer data
 interface LayerData {
   data: string;
   headers?: string;
   protocols: string;
   processes: string[];
-  rawData?: string; // Original data before processing
-  addedData?: string; // Data added at this layer
-  finalData?: string; // Final data after processing
+  rawData?: string; 
+  addedData?: string; 
+  finalData?: string; 
   binaryRepresentation?: string;
   signalPattern?: string;
   handshakeData?: {
@@ -16,10 +13,9 @@ interface LayerData {
     synAck: string;
     ack: string;
   };
-  originalMessage?: string; // Store the original message
+  originalMessage?: string; 
 }
 
-// Interface for simulation data
 interface SimulationData {
   originalMessage: string;
   layers: {
@@ -31,7 +27,7 @@ interface SimulationData {
 }
 
 /**
- * Process a user message through all OSI layers
+ * Process a user message through all OSI layers.
  */
 export function processMessage(message: string, mediaType: string = "cable"): SimulationData {
   const simulationData: SimulationData = {
@@ -39,28 +35,21 @@ export function processMessage(message: string, mediaType: string = "cable"): Si
     layers: {}
   };
 
-  // Initialize all layers with processed data flowing through each layer
   let processedData = message;
   
-  // Sending direction - data flows down through layers 7 to 1
   for (let i = 7; i >= 1; i--) {
     const layerData = generateLayerData(processedData, i, "sending", mediaType, message);
     simulationData.layers[i] = {
       sending: layerData,
-      receiving: {} as LayerData // Will be filled later
+      receiving: {} as LayerData 
     };
     
-    // Update processed data for next layer
     processedData = layerData.finalData || processedData;
   }
   
-  // Store the final binary representation for physical transmission
   const binaryTransmission = processedData;
   
-  // For receiving, we'll use the original message directly
-  // This ensures the data is properly preserved through all layers
   for (let i = 1; i <= 7; i++) {
-    // Generate receiving data that preserves the original message
     const layerData = generateReceivingLayerData(i, mediaType, message, binaryTransmission);
     simulationData.layers[i].receiving = layerData;
   }
@@ -69,7 +58,7 @@ export function processMessage(message: string, mediaType: string = "cable"): Si
 }
 
 /**
- * Get data for a specific layer
+ * Get data for a specific layer.
  */
 export function getLayerData(
   data: SimulationData,
@@ -85,7 +74,6 @@ export function getLayerData(
 function stringToBinary(str: string): string {
   return str.split('').map(char => {
     const binary = char.charCodeAt(0).toString(2);
-    // Pad with zeros to ensure 8 bits per character
     return '0'.repeat(8 - binary.length) + binary;
   }).join(' ');
 }
@@ -100,7 +88,6 @@ function generateLayerData(
   mediaType: string = "cable",
   originalMessage?: string
 ): LayerData {
-  // Default layer data
   const layerData: LayerData = {
     data: message,
     protocols: "",
@@ -108,17 +95,15 @@ function generateLayerData(
     rawData: message,
     addedData: "",
     finalData: "",
-    originalMessage: originalMessage // Store the original message
+    originalMessage: originalMessage 
   };
   
-  // For receiving direction in layers 2-6, preserve the original message in finalData
   if (direction === "receiving" && layerId > 1 && layerId < 7 && originalMessage) {
     layerData.finalData = message;
   }
 
-  // Process based on layer
   switch (layerId) {
-    case 7: // Application Layer
+    case 7: 
       if (direction === "sending") {
         layerData.data = message;
         layerData.protocols = "HTTP, SMTP, FTP, DNS, DHCP";
@@ -144,7 +129,6 @@ function generateLayerData(
         layerData.rawData = message;
         layerData.addedData = "";
         
-        // Always use the original message for the final data in the Application layer
         if (originalMessage) {
           layerData.finalData = originalMessage;
         } else {
@@ -155,9 +139,8 @@ function generateLayerData(
       }
       break;
 
-    case 6: // Presentation Layer
+    case 6: 
       if (direction === "sending") {
-        // Simulate encoding/encryption instead of just adding text in brackets
         const encodedMessage = encodeMessage(message);
         
         layerData.data = encodedMessage;
@@ -174,7 +157,6 @@ function generateLayerData(
         layerData.finalData = `Content-Type: text/plain; charset=UTF-8\nContent-Encoding: gzip\nContent-Transfer-Encoding: base64\n\n${encodedMessage}`;
         layerData.binaryRepresentation = "";
       } else {
-        // Simulate decoding/decryption
         const decodedMessage = decodeMessage(message);
         
         layerData.data = decodedMessage;
@@ -193,9 +175,8 @@ function generateLayerData(
       }
       break;
 
-    case 5: // Session Layer
+    case 5: 
       if (direction === "sending") {
-        // Create a session with real session ID and parameters
         const sessionId = generateSessionId();
         const sessionData = `${message}`;
         
@@ -213,8 +194,6 @@ function generateLayerData(
         layerData.finalData = `Session-ID: ${sessionId}\nDialog-Control: Half-Duplex\nCheckpoint: 0\n\n${message}`;
         layerData.binaryRepresentation = "";
       } else {
-        // Extract session data
-        // Find the position of the double newline that separates headers from body
         const sessionHeaderEndIndex = message.indexOf("\n\n");
         const sessionMessage = sessionHeaderEndIndex >= 0 ? message.substring(sessionHeaderEndIndex + 2) : message;
         
@@ -234,9 +213,8 @@ function generateLayerData(
       }
       break;
 
-    case 4: // Transport Layer
+    case 4: 
       if (direction === "sending") {
-        // Create real TCP segments with sequence numbers
         const sourcePort = 49152;
         const destPort = 80;
         const seqNumber = 1000;
@@ -262,8 +240,6 @@ function generateLayerData(
           ack: `ACK: Acknowledgment=2001`
         };
       } else {
-        // Reassemble TCP segments
-        // Find the position of the double newline that separates headers from body
         const tcpHeaderEndIndex = message.indexOf("\n\n");
         const transportMessage = tcpHeaderEndIndex >= 0 ? message.substring(tcpHeaderEndIndex + 2) : message;
         const reassembledData = reassembleSegments(transportMessage);
@@ -285,9 +261,8 @@ function generateLayerData(
       }
       break;
 
-    case 3: // Network Layer
+    case 3: 
       if (direction === "sending") {
-        // Create IP packet with real header information
         const sourceIP = "192.168.1.10";
         const destIP = "10.0.0.5";
         const ttl = 64;
@@ -307,8 +282,6 @@ function generateLayerData(
         layerData.finalData = `[IP Header]\nVersion: 4\nHeader Length: 20 bytes\nType of Service: 0x00\nTotal Length: ${message.length + 40} bytes\nIdentification: 0x1234\nFlags: 0x02 (Don't Fragment)\nFragment Offset: 0\nTTL: ${ttl}\nProtocol: TCP (6)\nHeader Checksum: 0xB861\nSource IP: ${sourceIP}\nDestination IP: ${destIP}\n\n${packetData}`;
         layerData.binaryRepresentation = "";
       } else {
-        // Extract packet data
-        // Find the position of the double newline that separates headers from body
         const ipHeaderEndIndex = message.indexOf("\n\n");
         const networkMessage = ipHeaderEndIndex >= 0 ? message.substring(ipHeaderEndIndex + 2) : message;
         const extractedData = extractPacketData(networkMessage);
@@ -330,9 +303,8 @@ function generateLayerData(
       }
       break;
 
-    case 2: // Data Link Layer
+    case 2: 
       if (direction === "sending") {
-        // Create Ethernet frame with real MAC addresses and frame data
         const sourceMac = "00:1A:2B:3C:4D:5E";
         const destMac = "FF:FF:FF:FF:FF:FF";
         const frameData = createFrame(message);
@@ -351,13 +323,9 @@ function generateLayerData(
         layerData.addedData = "Ethernet Frame Header and Trailer";
         layerData.finalData = `[Ethernet Frame]\nPreamble: 10101010 10101010 10101010 10101010 10101010 10101010 10101010\nStart Frame Delimiter: 10101011\nDestination MAC: ${destMac}\nSource MAC: ${sourceMac}\nEtherType: 0x0800 (IPv4)\n\n${frameData}\n\nFrame Check Sequence (CRC): ${crc}`;
         
-        // Create binary representation for visualization
         layerData.binaryRepresentation = stringToBinary(message);
       } else {
-        // Extract frame data - but preserve the original data
-        // Find the position of the double newline that separates headers from body
         const frameHeaderEndIndex = message.indexOf("\n\n");
-        // Find the position of "Frame Check Sequence"
         const frameTrailerStartIndex = message.indexOf("\n\nFrame Check Sequence");
         
         let dataLinkMessage = message;
@@ -369,7 +337,6 @@ function generateLayerData(
           }
         }
         
-        // Don't extract or modify the frame data to preserve the original content
         const extractedFrameData = dataLinkMessage;
         
         layerData.data = extractedFrameData;
@@ -389,14 +356,12 @@ function generateLayerData(
       }
       break;
 
-    case 1: // Physical Layer
+    case 1: 
       if (direction === "sending") {
-        // Convert to binary representation
         const binaryData = layerData.binaryRepresentation || stringToBinary(message);
         
         layerData.data = binaryData;
         
-        // Set protocols based on media type
         switch (mediaType) {
           case "fiber":
             layerData.protocols = "Optical Fiber, SONET/SDH, OTN";
@@ -404,7 +369,7 @@ function generateLayerData(
           case "wireless":
             layerData.protocols = "Wi-Fi (802.11), Bluetooth, Cellular (4G/5G)";
             break;
-          default: // cable
+          default: 
             layerData.protocols = "Ethernet, USB, DSL";
             break;
         }
@@ -424,7 +389,6 @@ function generateLayerData(
         layerData.finalData = binaryData;
         layerData.binaryRepresentation = binaryData;
         
-        // Add media-specific signal pattern
         switch (mediaType) {
           case "fiber":
             layerData.signalPattern = generateLightSignalPattern(binaryData);
@@ -432,17 +396,15 @@ function generateLayerData(
           case "wireless":
             layerData.signalPattern = generateWirelessSignalPattern(binaryData);
             break;
-          default: // cable
+          default: 
             layerData.signalPattern = generateElectricalSignalPattern(binaryData);
             break;
         }
       } else {
-        // For receiving, we preserve the binary data exactly as it was sent
         const binaryData = message;
         
         layerData.data = binaryData;
-        
-        // Set protocols based on media type
+
         switch (mediaType) {
           case "fiber":
             layerData.protocols = "Optical Fiber, SONET/SDH, OTN";
@@ -450,7 +412,7 @@ function generateLayerData(
           case "wireless":
             layerData.protocols = "Wi-Fi (802.11), Bluetooth, Cellular (4G/5G)";
             break;
-          default: // cable
+          default: 
             layerData.protocols = "Ethernet, USB, DSL";
             break;
         }
@@ -466,11 +428,9 @@ function generateLayerData(
         layerData.rawData = binaryData;
         layerData.addedData = "";
         
-        // Preserve the exact binary data for the Data Link layer
         layerData.finalData = `[Ethernet Frame]\nPreamble: 10101010 10101010 10101010 10101010 10101010 10101010 10101010\nStart Frame Delimiter: 10101011\nDestination MAC: 00:1A:2B:3C:4D:5E\nSource MAC: FF:FF:FF:FF:FF:FF\nEtherType: 0x0800 (IPv4)\n\n${binaryData}\n\nFrame Check Sequence (CRC): 0x1D4C6A3B`;
         layerData.binaryRepresentation = binaryData;
         
-        // Add media-specific signal pattern
         switch (mediaType) {
           case "fiber":
             layerData.signalPattern = generateLightSignalPattern(binaryData);
@@ -478,7 +438,7 @@ function generateLayerData(
           case "wireless":
             layerData.signalPattern = generateWirelessSignalPattern(binaryData);
             break;
-          default: // cable
+          default: 
             layerData.signalPattern = generateElectricalSignalPattern(binaryData);
             break;
         }
@@ -490,16 +450,13 @@ function generateLayerData(
 }
 
 /**
- * Generate electrical signal pattern for visualization
+ * Generate electrical signal pattern for visualization.
  */
 function generateElectricalSignalPattern(binaryData: string): string {
-  // Convert binary to voltage levels for visualization
-  // Remove spaces for processing
   const cleanBinary = binaryData.replace(/\s/g, '');
   
   let pattern = '';
   for (let i = 0; i < cleanBinary.length; i++) {
-    // 1 is high voltage, 0 is low voltage
     pattern += cleanBinary[i] === '1' ? '▄' : '▁';
   }
   
@@ -507,16 +464,13 @@ function generateElectricalSignalPattern(binaryData: string): string {
 }
 
 /**
- * Generate light signal pattern for visualization
+ * Generate light signal pattern for visualization.
  */
 function generateLightSignalPattern(binaryData: string): string {
-  // Convert binary to light intensity levels for visualization
-  // Remove spaces for processing
   const cleanBinary = binaryData.replace(/\s/g, '');
   
   let pattern = '';
   for (let i = 0; i < cleanBinary.length; i++) {
-    // 1 is bright light, 0 is dim/no light
     pattern += cleanBinary[i] === '1' ? '●' : '○';
   }
   
@@ -524,16 +478,13 @@ function generateLightSignalPattern(binaryData: string): string {
 }
 
 /**
- * Generate wireless signal pattern for visualization
+ * Generate wireless signal pattern for visualization.
  */
 function generateWirelessSignalPattern(binaryData: string): string {
-  // Convert binary to radio wave patterns for visualization
-  // Remove spaces for processing
   const cleanBinary = binaryData.replace(/\s/g, '');
   
   let pattern = '';
-  for (let i = 0; i < cleanBinary.length; i++) {
-    // 1 is strong signal, 0 is weak signal
+  for (let i = 0; i < cleanBinary.length; i++) {  
     pattern += cleanBinary[i] === '1' ? '〰️' : '〜';
   }
   
@@ -541,28 +492,22 @@ function generateWirelessSignalPattern(binaryData: string): string {
 }
 
 /**
- * Helper functions for realistic data transformations
+ * Helper functions for realistic data transformations.
  */
 
-// Encode a message (simulate Base64 + encryption)
 function encodeMessage(message: string): string {
   try {
-    // Simple base64-like encoding for demonstration
     return btoa(message);
   } catch {
-    // Fallback for non-ASCII characters
     return `[Encoded: ${message}]`;
   }
 }
 
-// Decode a message
 function decodeMessage(message: string): string {
   try {
-    // Try to decode if it's base64
     if (message.match(/^[A-Za-z0-9+/=]+$/)) {
       return atob(message);
     }
-    // If not base64, extract from our custom format
     const match = message.match(/\[Encoded: (.*)\]/);
     if (match) return match[1];
     return message;
@@ -571,7 +516,6 @@ function decodeMessage(message: string): string {
   }
 }
 
-// Generate a realistic session ID
 function generateSessionId(): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let result = 'SID:';
@@ -581,9 +525,7 @@ function generateSessionId(): string {
   return result;
 }
 
-// Segment data for transport layer
 function segmentData(data: string): string {
-  // Simulate segmentation by adding segment indicators
   const segmentSize = 20;
   let segmented = '';
   
@@ -600,33 +542,23 @@ function segmentData(data: string): string {
   return segmented;
 }
 
-// Reassemble segments
 function reassembleSegments(segmentedData: string): string {
-  // Remove segment indicators
   return segmentedData.replace(/\[SEG:\d+\]/g, '').replace(/\n/g, '');
 }
 
-// Create network packet
 function createPacket(data: string): string {
-  // Add packet information
   return `[PKT:${Date.now() % 10000}]${data}`;
 }
 
-// Extract packet data
 function extractPacketData(packetData: string): string {
-  // Remove packet indicators
   return packetData.replace(/\[PKT:\d+\]/g, '');
 }
 
-// Create data link frame
 function createFrame(data: string): string {
-  // Add frame information
   return `[FRM:${(Date.now() % 1000).toString(16).padStart(4, '0')}]${data}`;
 }
 
-// Calculate CRC for error detection
 function calculateCRC(data: string): string {
-  // Simple mock CRC calculation
   let crc = 0;
   for (let i = 0; i < data.length; i++) {
     crc = ((crc << 5) + crc) + data.charCodeAt(i);
@@ -635,8 +567,8 @@ function calculateCRC(data: string): string {
 }
 
 /**
- * Generate data specifically for the receiving phase
- * This mirrors the sending process in reverse - input becomes output and output becomes input
+ * Generate data specifically for the receiving phase.
+ * This mirrors the sending process in reverse - input becomes output and output becomes input.
  */
 function generateReceivingLayerData(
   layerId: number,
@@ -644,87 +576,67 @@ function generateReceivingLayerData(
   originalMessage: string,
   binaryTransmission: string
 ): LayerData {
-  // We need to build a chain of data transformations going from layer 1 to 7
-  // Each layer's input should be the previous layer's output
   
-  // Start with what each layer would receive from the layer below
   let currentData = "";
   
   if (layerId === 1) {
-    // Physical layer receives the binary transmission
     currentData = binaryTransmission;
   } else if (layerId === 2) {
-    // Data link receives from physical - the ethernet frame
     const frameData = createFrame(originalMessage);
     const crc = calculateCRC(frameData);
     currentData = `[Ethernet Frame]\nPreamble: 10101010 10101010 10101010 10101010 10101010 10101010 10101010\nStart Frame Delimiter: 10101011\nDestination MAC: 00:1A:2B:3C:4D:5E\nSource MAC: FF:FF:FF:FF:FF:FF\nEtherType: 0x0800 (IPv4)\n\n${frameData}\n\nFrame Check Sequence (CRC): ${crc}`;
   } else if (layerId === 3) {
-    // Network receives from data link - the IP packet
     const packetData = createPacket(originalMessage);
     currentData = `[IP Header]\nVersion: 4\nHeader Length: 20 bytes\nType of Service: 0x00\nTotal Length: ${originalMessage.length + 40} bytes\nIdentification: 0x1234\nFlags: 0x02 (Don't Fragment)\nFragment Offset: 0\nTTL: 64\nProtocol: TCP (6)\nHeader Checksum: 0xB861\nSource IP: 10.0.0.5\nDestination IP: 192.168.1.10\n\n${packetData}`;
   } else if (layerId === 4) {
-    // Transport receives from network - the TCP segments
     const segmentedData = segmentData(originalMessage);
     currentData = `[TCP Header]\nSource Port: 80\nDestination Port: 49152\nSequence Number: 2000\nACK Number: 1001\nFlags: PSH, ACK\nWindow Size: 64240\nChecksum: 0x3F4D\n\n${segmentedData}`;
   } else if (layerId === 5) {
-    // Session receives from transport - session data
     const sessionId = generateSessionId();
     currentData = `Session-ID: ${sessionId}\nDialog-Control: Half-Duplex\nCheckpoint: 0\n\n${originalMessage}`;
   } else if (layerId === 6) {
-    // Presentation receives from session - encoded data
     const encodedMessage = encodeMessage(originalMessage);
     currentData = `Content-Type: text/plain; charset=UTF-8\nContent-Encoding: gzip\nContent-Transfer-Encoding: base64\n\n${encodedMessage}`;
   } else if (layerId === 7) {
-    // Application receives from presentation - HTTP data
     currentData = `GET /resource HTTP/1.1\nHost: example.com\nUser-Agent: OSI-Simulator\nAccept: text/html\n\n${originalMessage}`;
   }
   
-  // What each layer outputs (removes its headers/processing)
   let outputData = "";
   
   if (layerId === 1) {
-    // Physical outputs the ethernet frame to data link
     const frameData = createFrame(originalMessage);
     const crc = calculateCRC(frameData);
     outputData = `[Ethernet Frame]\nPreamble: 10101010 10101010 10101010 10101010 10101010 10101010 10101010\nStart Frame Delimiter: 10101011\nDestination MAC: 00:1A:2B:3C:4D:5E\nSource MAC: FF:FF:FF:FF:FF:FF\nEtherType: 0x0800 (IPv4)\n\n${frameData}\n\nFrame Check Sequence (CRC): ${crc}`;
-  } else if (layerId === 2) {
-    // Data link outputs the IP packet to network
+  } else if (layerId === 2) {   
     const packetData = createPacket(originalMessage);
     outputData = `[IP Header]\nVersion: 4\nHeader Length: 20 bytes\nType of Service: 0x00\nTotal Length: ${originalMessage.length + 40} bytes\nIdentification: 0x1234\nFlags: 0x02 (Don't Fragment)\nFragment Offset: 0\nTTL: 64\nProtocol: TCP (6)\nHeader Checksum: 0xB861\nSource IP: 10.0.0.5\nDestination IP: 192.168.1.10\n\n${packetData}`;
   } else if (layerId === 3) {
-    // Network outputs the TCP segments to transport
     const segmentedData = segmentData(originalMessage);
     outputData = `[TCP Header]\nSource Port: 80\nDestination Port: 49152\nSequence Number: 2000\nACK Number: 1001\nFlags: PSH, ACK\nWindow Size: 64240\nChecksum: 0x3F4D\n\n${segmentedData}`;
   } else if (layerId === 4) {
-    // Transport outputs the session data
     const sessionId = generateSessionId();
     outputData = `Session-ID: ${sessionId}\nDialog-Control: Half-Duplex\nCheckpoint: 0\n\n${originalMessage}`;
   } else if (layerId === 5) {
-    // Session outputs the encoded data to presentation
     const encodedMessage = encodeMessage(originalMessage);
     outputData = `Content-Type: text/plain; charset=UTF-8\nContent-Encoding: gzip\nContent-Transfer-Encoding: base64\n\n${encodedMessage}`;
   } else if (layerId === 6) {
-    // Presentation outputs the HTTP data to application
     outputData = `GET /resource HTTP/1.1\nHost: example.com\nUser-Agent: OSI-Simulator\nAccept: text/html\n\n${originalMessage}`;
   } else if (layerId === 7) {
-    // Application outputs the final message
     outputData = originalMessage;
   }
   
-  // Create the layer data
   const layerData: LayerData = {
     data: currentData,
     protocols: "",
     processes: [],
-    rawData: currentData, // Input data for this layer
+    rawData: currentData, 
     addedData: "",
-    finalData: outputData, // Output data from this layer
+    finalData: outputData, 
     originalMessage: originalMessage
   };
   
-  // Set layer-specific details
   switch (layerId) {
-    case 7: // Application Layer
+    case 7: 
       layerData.protocols = "HTTP, SMTP, FTP, DNS, DHCP";
       layerData.processes = [
         "Data is received from Presentation layer",
@@ -735,7 +647,7 @@ function generateReceivingLayerData(
       layerData.headers = "";
       break;
       
-    case 6: // Presentation Layer
+    case 6: 
       layerData.protocols = "SSL/TLS, MIME, XDR";
       layerData.processes = [
         "Decryption of encrypted data",
@@ -746,7 +658,7 @@ function generateReceivingLayerData(
       layerData.headers = "Content-Type: text/plain; charset=UTF-8";
       break;
       
-    case 5: // Session Layer
+    case 5: 
       layerData.protocols = "NetBIOS, RPC, PPTP";
       layerData.processes = [
         "Verifying session identifiers",
@@ -754,12 +666,11 @@ function generateReceivingLayerData(
         "Handling dialog control for data exchange",
         "Preparing to close the session when transmission completes"
       ];
-      // Extract session ID from the data
       const sessionMatch = layerData.rawData?.match(/Session-ID: ([^\n]+)/);
       layerData.headers = sessionMatch ? sessionMatch[0] : "Session-ID: Unknown";
       break;
       
-    case 4: // Transport Layer
+    case 4: 
       layerData.protocols = "TCP, UDP, SCTP";
       layerData.processes = [
         "Reassembling segments into complete message",
@@ -771,7 +682,7 @@ function generateReceivingLayerData(
       layerData.headers = "Source Port: 80\nDestination Port: 49152\nSequence Number: 2000\nACK Number: 1001\nWindow Size: 64240";
       break;
       
-    case 3: // Network Layer
+    case 3: 
       layerData.protocols = "IP, ICMP, IGMP, ARP";
       layerData.processes = [
         "Checking destination IP address",
@@ -783,7 +694,7 @@ function generateReceivingLayerData(
       layerData.headers = "Source IP: 10.0.0.5\nDestination IP: 192.168.1.10\nTTL: 64\nProtocol: TCP (6)";
       break;
       
-    case 2: // Data Link Layer
+    case 2: 
       layerData.protocols = "Ethernet, PPP, HDLC, Frame Relay";
       layerData.processes = [
         "Checking MAC addresses",
@@ -795,8 +706,7 @@ function generateReceivingLayerData(
       layerData.headers = "Source MAC: FF:FF:FF:FF:FF:FF\nDestination MAC: 00:1A:2B:3C:4D:5E";
       break;
       
-    case 1: // Physical Layer
-      // Set protocols based on media type
+    case 1: 
       switch (mediaType) {
         case "fiber":
           layerData.protocols = "Optical Fiber, SONET/SDH, OTN";
@@ -804,7 +714,7 @@ function generateReceivingLayerData(
         case "wireless":
           layerData.protocols = "Wi-Fi (802.11), Bluetooth, Cellular (4G/5G)";
           break;
-        default: // cable
+        default: 
           layerData.protocols = "Ethernet, USB, DSL";
           break;
       }
@@ -817,10 +727,8 @@ function generateReceivingLayerData(
         "Passing bits to Data Link layer"
       ];
       
-      // For physical layer, use the full binary representation
       layerData.binaryRepresentation = stringToBinary(originalMessage);
       
-      // Add media-specific signal pattern
       switch (mediaType) {
         case "fiber":
           layerData.signalPattern = generateLightSignalPattern(layerData.binaryRepresentation);
@@ -828,7 +736,7 @@ function generateReceivingLayerData(
         case "wireless":
           layerData.signalPattern = generateWirelessSignalPattern(layerData.binaryRepresentation);
           break;
-        default: // cable
+        default: 
           layerData.signalPattern = generateElectricalSignalPattern(layerData.binaryRepresentation);
           break;
       }

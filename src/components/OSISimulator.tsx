@@ -6,7 +6,6 @@ import { processMessage } from "../utils/osiUtils";
 import TransmissionMedia from "./TransmissionMedia";
 import Image from "next/image";
 
-// Define the OSI layers
 const osiLayers = [
   {
     id: 7,
@@ -59,14 +58,12 @@ const osiLayers = [
   },
 ];
 
-// Transmission media types
 const transmissionMediaTypes = [
   { id: "cable", name: "Copper Cable", speed: "1 Gbps", reliability: "High", range: "100m", description: "Uses electrical signals through copper wires" },
   { id: "fiber", name: "Optical Fiber", speed: "10+ Gbps", reliability: "Very High", range: "10+ km", description: "Uses light pulses through glass or plastic fibers" },
   { id: "wireless", name: "Wireless", speed: "450+ Mbps", reliability: "Medium", range: "30-100m", description: "Uses radio waves through air" }
 ];
 
-// Define simulation data type
 interface SimulationData {
   originalMessage: string;
   layers: {
@@ -110,20 +107,18 @@ export default function OSISimulator() {
   const [showOSIInfo, setShowOSIInfo] = useState(false);
   const [showDetailedView, setShowDetailedView] = useState(true);
   const [autoStep, setAutoStep] = useState(false);
-  const [stepDelay, setStepDelay] = useState(2000); // 2 seconds by default
+  const [autoScroll, setAutoScroll] = useState(false);
+  const [stepDelay, setStepDelay] = useState(2000);
   const [isPaused, setIsPaused] = useState(false);
   const [showTransmissionAnimation, setShowTransmissionAnimation] = useState(false);
   const [selectedMedia, setSelectedMedia] = useState("cable");
   const [showContinueButton, setShowContinueButton] = useState(false);
   const [showRestartButton, setShowRestartButton] = useState(false);
   
-  // Reference to store interval ID for auto-stepping
   const autoStepIntervalRef = useRef<NodeJS.Timeout | null>(null);
   
-  // Reference for the simulation container for scrolling
   const simulationContainerRef = useRef<HTMLDivElement>(null);
 
-  // Get binary data for transmission visualization
   const getPhysicalLayerBinaryData = () => {
     if (!simulationData || !simulationData.layers || !simulationData.layers[1]) {
       return "";
@@ -132,11 +127,23 @@ export default function OSISimulator() {
     return simulationData.layers[1].sending.binaryRepresentation || "";
   };
 
+  const handleAutoModeChange = (mode: 'step' | 'scroll' | 'none') => {
+    if (mode === 'step') {
+      setAutoStep(true);
+      setAutoScroll(false);
+    } else if (mode === 'scroll') {
+      setAutoStep(false);
+      setAutoScroll(true);
+    } else {
+      setAutoStep(false);
+      setAutoScroll(false);
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!userMessage.trim()) return;
     
-    // Process the message and initialize simulation
     const data = processMessage(userMessage, selectedMedia);
     setSimulationData(data);
     setSimulationActive(true);
@@ -147,15 +154,13 @@ export default function OSISimulator() {
     setShowContinueButton(false);
     setShowRestartButton(false);
     
-    // Clear any existing interval
     if (autoStepIntervalRef.current) {
       clearInterval(autoStepIntervalRef.current);
       autoStepIntervalRef.current = null;
     }
     
-    console.log("Simulation initialized, auto-step:", autoStep);
+    console.log("Simulation initialized, auto-step:", autoStep, "auto-scroll:", autoScroll);
     
-    // Scroll to the top of the simulation container
     if (simulationContainerRef.current) {
       setTimeout(() => {
         simulationContainerRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -167,7 +172,6 @@ export default function OSISimulator() {
     if (simulationDirection === "sending") {
       if (simulationStep < osiLayers.length - 1) {
         setSimulationStep(simulationStep + 1);
-        // Scroll to the active layer
         setTimeout(() => {
           const activeLayerElement = document.getElementById(`osi-layer-${7 - (simulationStep + 1)}`);
           if (activeLayerElement) {
@@ -176,21 +180,16 @@ export default function OSISimulator() {
         }, 50);
       } else {
         if (autoStep) {
-          // Clear interval when reaching the end of sending phase
           if (autoStepIntervalRef.current) {
             clearInterval(autoStepIntervalRef.current);
             autoStepIntervalRef.current = null;
           }
-          // Show the continue button
           setShowContinueButton(true);
           return;
         }
         
-        // Show transmission animation
         setShowTransmissionAnimation(true);
         
-        // Wait for animation to complete before transitioning to receiving side
-        // Different media types have different transmission times
         const transmissionTime = selectedMedia === "fiber" ? 1000 : 
                                selectedMedia === "wireless" ? 3000 : 2000;
         
@@ -200,7 +199,6 @@ export default function OSISimulator() {
           setSimulationStep(osiLayers.length - 1);
           setShowConnectionSetup(false);
           
-          // Scroll to the active layer after direction change
           setTimeout(() => {
             const activeLayerElement = document.getElementById(`osi-layer-${7 - (osiLayers.length - 1)}`);
             if (activeLayerElement) {
@@ -209,19 +207,16 @@ export default function OSISimulator() {
           }, 50);
         }, transmissionTime);
         
-        // Pause auto-stepping during animation
         if (autoStepIntervalRef.current) {
           clearInterval(autoStepIntervalRef.current);
           autoStepIntervalRef.current = null;
         }
         
-        return; // Exit early to prevent immediate state update
+        return; 
       }
     } else {
-      // Receiving direction
       if (simulationStep > 0) {
         setSimulationStep(simulationStep - 1);
-        // Scroll to the active layer
         setTimeout(() => {
           const activeLayerElement = document.getElementById(`osi-layer-${7 - (simulationStep - 1)}`);
           if (activeLayerElement) {
@@ -230,22 +225,18 @@ export default function OSISimulator() {
         }, 50);
       } else {
         if (autoStep) {
-          // Clear interval when reaching the end of receiving phase
           if (autoStepIntervalRef.current) {
             clearInterval(autoStepIntervalRef.current);
             autoStepIntervalRef.current = null;
           }
-          // Show the restart button
           setShowRestartButton(true);
           return;
         }
         
-        // Instead of ending, loop back to sending
         setSimulationDirection("sending");
         setSimulationStep(0);
         setShowConnectionSetup(true);
         
-        // Scroll to the active layer after direction change
         setTimeout(() => {
           const activeLayerElement = document.getElementById(`osi-layer-${7 - 0}`);
           if (activeLayerElement) {
@@ -260,7 +251,6 @@ export default function OSISimulator() {
     if (simulationDirection === "sending") {
       if (simulationStep > 0) {
         setSimulationStep(simulationStep - 1);
-        // Scroll to the active layer
         setTimeout(() => {
           const activeLayerElement = document.getElementById(`osi-layer-${7 - (simulationStep - 1)}`);
           if (activeLayerElement) {
@@ -268,12 +258,10 @@ export default function OSISimulator() {
           }
         }, 50);
       } else {
-        // Go to receiving direction, last step
         setSimulationDirection("receiving");
         setSimulationStep(0);
         setShowConnectionSetup(false);
         
-        // Scroll to the active layer after direction change
         setTimeout(() => {
           const activeLayerElement = document.getElementById(`osi-layer-${7 - 0}`);
           if (activeLayerElement) {
@@ -282,18 +270,15 @@ export default function OSISimulator() {
         }, 50);
       }
     } else {
-      // Receiving direction
       if (simulationStep < osiLayers.length - 1) {
         setSimulationStep(simulationStep + 1);
-        // Scroll to the active layer
         setTimeout(() => {
           const activeLayerElement = document.getElementById(`osi-layer-${7 - (simulationStep + 1)}`);
           if (activeLayerElement) {
             activeLayerElement.scrollIntoView({ behavior: "smooth", block: "start" });
           }
         }, 50);
-      } else {
-        // Go back to sending direction with transmission animation
+      } else {    
         setShowTransmissionAnimation(true);
         
         const transmissionTime = selectedMedia === "fiber" ? 1000 : 
@@ -305,7 +290,6 @@ export default function OSISimulator() {
           setSimulationStep(osiLayers.length - 1);
           setShowConnectionSetup(true);
           
-          // Scroll to the active layer after direction change
           setTimeout(() => {
             const activeLayerElement = document.getElementById(`osi-layer-${7 - (osiLayers.length - 1)}`);
             if (activeLayerElement) {
@@ -317,7 +301,6 @@ export default function OSISimulator() {
     }
   }, [simulationDirection, simulationStep, selectedMedia]);
 
-  // Handle keyboard navigation
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
       if (!simulationActive) return;
@@ -335,23 +318,19 @@ export default function OSISimulator() {
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [simulationActive, handleNextStep, handlePreviousStep]);
 
-  // Handle continue button click
   const handleContinue = () => {
-    // Hide continue button and start transmission animation
     setShowContinueButton(false);
     setShowTransmissionAnimation(true);
     
-    // Wait for animation to complete before transitioning to receiving side
     const transmissionTime = selectedMedia === "fiber" ? 1000 : 
                            selectedMedia === "wireless" ? 3000 : 2000;
     
     setTimeout(() => {
       setShowTransmissionAnimation(false);
       setSimulationDirection("receiving");
-      setSimulationStep(osiLayers.length - 1); // Start at Physical layer on receiving side
+      setSimulationStep(osiLayers.length - 1); 
       setShowConnectionSetup(false);
       
-      // Scroll to the active layer after direction change
       setTimeout(() => {
         const activeLayerElement = document.getElementById(`osi-layer-${7 - (osiLayers.length - 1)}`);
         if (activeLayerElement) {
@@ -359,26 +338,20 @@ export default function OSISimulator() {
         }
       }, 50);
       
-      // Resume auto-stepping for receiving phase after a brief delay
       if (autoStep && !isPaused) {
-        // First clear any existing interval
         if (autoStepIntervalRef.current) {
           clearInterval(autoStepIntervalRef.current);
           autoStepIntervalRef.current = null;
         }
         
-        // Small delay to ensure UI updates first
         setTimeout(() => {
           console.log("Starting auto-step for receiving direction");
           
-          // Start a new interval for auto-stepping through receiver layers
           const receivingInterval = setInterval(() => {
             setSimulationStep((prevStep) => {
               console.log("Auto-stepping receiver, current step:", prevStep);
               
-              // Continue stepping up through receiver layers
               if (prevStep > 0) {
-                // Scroll to the active layer after step update
                 const newStep = prevStep - 1;
                 setTimeout(() => {
                   const activeLayerElement = document.getElementById(`osi-layer-${7 - newStep}`);
@@ -388,7 +361,6 @@ export default function OSISimulator() {
                 }, 50);
                 return newStep;
               } else {
-                // At the end, clear interval and show restart button
                 console.log("Reached end of receiver layers, showing restart button");
                 clearInterval(receivingInterval);
                 setShowRestartButton(true);
@@ -397,22 +369,18 @@ export default function OSISimulator() {
             });
           }, stepDelay);
           
-          // Store the interval reference
           autoStepIntervalRef.current = receivingInterval;
-        }, 300); // Increased delay for more reliable UI update
+        }, 300); 
       }
     }, transmissionTime);
   };
 
-  // Handle restart button click
   const handleRestart = () => {
-    // Hide restart button and reset simulation state
     setShowRestartButton(false);
     setSimulationDirection("sending");
-    setSimulationStep(0); // Start at Application layer (layer 7)
+    setSimulationStep(0); 
     setShowConnectionSetup(true);
     
-    // Scroll to the active layer after reset
     setTimeout(() => {
       const activeLayerElement = document.getElementById(`osi-layer-${7 - 0}`);
       if (activeLayerElement) {
@@ -420,26 +388,20 @@ export default function OSISimulator() {
       }
     }, 50);
     
-    // Resume auto-stepping for sending phase
     if (autoStep && !isPaused) {
-      // First clear any existing interval
       if (autoStepIntervalRef.current) {
         clearInterval(autoStepIntervalRef.current);
         autoStepIntervalRef.current = null;
       }
       
-      // Small delay to ensure UI updates first
       setTimeout(() => {
         console.log("Starting auto-step for sending direction");
         
-        // Start a new interval for auto-stepping through sender layers
         const sendingInterval = setInterval(() => {
           setSimulationStep((prevStep) => {
             console.log("Auto-stepping sender, current step:", prevStep);
             
-            // Continue stepping down through sender layers
             if (prevStep < osiLayers.length - 1) {
-              // Scroll to the active layer after step update
               const newStep = prevStep + 1;
               setTimeout(() => {
                 const activeLayerElement = document.getElementById(`osi-layer-${7 - newStep}`);
@@ -449,7 +411,6 @@ export default function OSISimulator() {
               }, 50);
               return newStep;
             } else {
-              // At the end, clear interval and show continue button
               console.log("Reached end of sender layers, showing continue button");
               clearInterval(sendingInterval);
               setShowContinueButton(true);
@@ -458,31 +419,34 @@ export default function OSISimulator() {
           });
         }, stepDelay);
         
-        // Store the interval reference
         autoStepIntervalRef.current = sendingInterval;
-      }, 300); // Increased delay for more reliable UI update
+      }, 300); 
     }
   };
 
-  // Handle auto-stepping
   useEffect(() => {
-    if (simulationActive && autoStep && !isPaused && !showContinueButton && !showRestartButton) {
-      // Clear any existing interval
+    if (!simulationActive || (!autoStep && !autoScroll) || isPaused || showContinueButton || showRestartButton) {
       if (autoStepIntervalRef.current) {
         clearInterval(autoStepIntervalRef.current);
         autoStepIntervalRef.current = null;
       }
-      
+      return;
+    }
+    
+    if (autoStepIntervalRef.current) {
+      clearInterval(autoStepIntervalRef.current);
+      autoStepIntervalRef.current = null;
+    }
+    
+    if (autoStep) {
       console.log("Setting up auto-step in useEffect, direction:", simulationDirection);
-      
-      // Set new interval for auto-stepping
+
       autoStepIntervalRef.current = setInterval(() => {
         if (simulationDirection === "sending") {
           setSimulationStep(prevStep => {
             console.log("Auto-stepping sender (useEffect), current step:", prevStep);
             
             if (prevStep < osiLayers.length - 1) {
-              // Scroll to the active layer after step update
               const newStep = prevStep + 1;
               setTimeout(() => {
                 const activeLayerElement = document.getElementById(`osi-layer-${7 - newStep}`);
@@ -492,13 +456,11 @@ export default function OSISimulator() {
               }, 50);
               return newStep;
             } else {
-              // Clear interval when reaching the end of sending phase
               if (autoStepIntervalRef.current) {
                 clearInterval(autoStepIntervalRef.current);
                 autoStepIntervalRef.current = null;
               }
               console.log("Reached end of sender layers (useEffect), showing continue button");
-              // Show the continue button
               setShowContinueButton(true);
               return osiLayers.length - 1;
             }
@@ -508,7 +470,6 @@ export default function OSISimulator() {
             console.log("Auto-stepping receiver (useEffect), current step:", prevStep);
             
             if (prevStep > 0) {
-              // Scroll to the active layer after step update
               const newStep = prevStep - 1;
               setTimeout(() => {
                 const activeLayerElement = document.getElementById(`osi-layer-${7 - newStep}`);
@@ -518,34 +479,58 @@ export default function OSISimulator() {
               }, 50);
               return newStep;
             } else {
-              // Clear interval when reaching the end of receiving phase
               if (autoStepIntervalRef.current) {
                 clearInterval(autoStepIntervalRef.current);
                 autoStepIntervalRef.current = null;
               }
               console.log("Reached end of receiver layers (useEffect), showing restart button");
-              // Show the restart button
               setShowRestartButton(true);
               return 0;
             }
           });
         }
       }, stepDelay);
-    } else if (autoStepIntervalRef.current) {
-      // Clear interval if simulation is not active or auto-step is disabled
-      console.log("Clearing auto-step interval in useEffect");
-      clearInterval(autoStepIntervalRef.current);
-      autoStepIntervalRef.current = null;
+    } else if (autoScroll) {
+      console.log("Setting up auto-scroll in useEffect");
+      
+      let currentLayerIndex = 0;
+      
+      autoStepIntervalRef.current = setInterval(() => {
+        const layerId = osiLayers[currentLayerIndex].id;
+        const layerElement = document.getElementById(`osi-layer-${layerId}`);
+        
+        if (layerElement) {
+          layerElement.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+        
+        currentLayerIndex = (currentLayerIndex + 1) % osiLayers.length;
+        
+        if (currentLayerIndex === 0) {
+          if (simulationDirection === "sending") {
+            setShowContinueButton(true);
+            if (autoStepIntervalRef.current) {
+              clearInterval(autoStepIntervalRef.current);
+              autoStepIntervalRef.current = null;
+            }
+          } 
+          else if (simulationDirection === "receiving") {
+            setShowRestartButton(true);
+            if (autoStepIntervalRef.current) {
+              clearInterval(autoStepIntervalRef.current);
+              autoStepIntervalRef.current = null;
+            }
+          }
+        }
+      }, stepDelay);
     }
     
-    // Cleanup on component unmount
     return () => {
       if (autoStepIntervalRef.current) {
         clearInterval(autoStepIntervalRef.current);
         autoStepIntervalRef.current = null;
       }
     };
-  }, [simulationActive, autoStep, isPaused, stepDelay, simulationDirection, showContinueButton, showRestartButton]);
+  }, [simulationActive, autoStep, autoScroll, isPaused, stepDelay, simulationDirection, showContinueButton, showRestartButton]);
 
   const resetSimulation = () => {
     setSimulationActive(false);
@@ -558,7 +543,6 @@ export default function OSISimulator() {
     setShowContinueButton(false);
     setShowRestartButton(false);
     
-    // Clear interval if it exists
     if (autoStepIntervalRef.current) {
       clearInterval(autoStepIntervalRef.current);
       autoStepIntervalRef.current = null;
@@ -571,57 +555,85 @@ export default function OSISimulator() {
     
     console.log("Toggle pause:", newPausedState);
     
-    // Handle auto-stepping when toggling pause state
-    if (autoStep) {
+    if (autoStep || autoScroll) {
       if (newPausedState) {
-        // Pause: clear the interval
         if (autoStepIntervalRef.current) {
-          console.log("Pausing auto-step, clearing interval");
+          console.log("Pausing auto-mode, clearing interval");
           clearInterval(autoStepIntervalRef.current);
           autoStepIntervalRef.current = null;
         }
       } else {
-        // Resume: restart auto-stepping based on current state
-        console.log("Resuming auto-step, direction:", simulationDirection);
-        
-        // Don't restart if we're at a point where continue/restart buttons should show
-        if ((simulationDirection === "sending" && simulationStep === osiLayers.length - 1) ||
-            (simulationDirection === "receiving" && simulationStep === 0)) {
-          console.log("At end of phase, not restarting auto-step");
-          return;
-        }
-        
-        // Clear any existing interval first
-        if (autoStepIntervalRef.current) {
-          clearInterval(autoStepIntervalRef.current);
-        }
-        
-        // Create new interval based on current direction
-        const newInterval = setInterval(() => {
-          if (simulationDirection === "sending") {
-            setSimulationStep(prevStep => {
-              if (prevStep < osiLayers.length - 1) {
-                return prevStep + 1;
-              } else {
-                clearInterval(newInterval);
-                setShowContinueButton(true);
-                return osiLayers.length - 1;
-              }
-            });
-          } else {
-            setSimulationStep(prevStep => {
-              if (prevStep > 0) {
-                return prevStep - 1;
-              } else {
-                clearInterval(newInterval);
-                setShowRestartButton(true);
-                return 0;
-              }
-            });
+        if (autoStep) {
+          console.log("Resuming auto-step, direction:", simulationDirection);
+          
+          if ((simulationDirection === "sending" && simulationStep === osiLayers.length - 1) ||
+              (simulationDirection === "receiving" && simulationStep === 0)) {
+            console.log("At end of phase, not restarting auto-step");
+            return;
           }
-        }, stepDelay);
-        
-        autoStepIntervalRef.current = newInterval;
+          
+          if (autoStepIntervalRef.current) {
+            clearInterval(autoStepIntervalRef.current);
+          }
+          
+          const newInterval = setInterval(() => {
+            if (simulationDirection === "sending") {
+              setSimulationStep(prevStep => {
+                if (prevStep < osiLayers.length - 1) {
+                  return prevStep + 1;
+                } else {
+                  clearInterval(newInterval);
+                  setShowContinueButton(true);
+                  return osiLayers.length - 1;
+                }
+              });
+            } else {
+              setSimulationStep(prevStep => {
+                if (prevStep > 0) {
+                  return prevStep - 1;
+                } else {
+                  clearInterval(newInterval);
+                  setShowRestartButton(true);
+                  return 0;
+                }
+              });
+            }
+          }, stepDelay);
+          
+          autoStepIntervalRef.current = newInterval;
+        } else if (autoScroll) {
+          console.log("Resuming auto-scroll");
+          
+          if (autoStepIntervalRef.current) {
+            clearInterval(autoStepIntervalRef.current);
+          }
+          
+          let currentLayerIndex = 0;
+          
+          const newInterval = setInterval(() => { 
+            const layerId = osiLayers[currentLayerIndex].id;
+            const layerElement = document.getElementById(`osi-layer-${layerId}`);
+            
+            if (layerElement) {
+              layerElement.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
+            
+            currentLayerIndex = (currentLayerIndex + 1) % osiLayers.length;
+            
+            if (currentLayerIndex === 0) {
+              if (simulationDirection === "sending") {
+                setShowContinueButton(true);
+                clearInterval(newInterval);
+              } 
+              else if (simulationDirection === "receiving") {
+                setShowRestartButton(true);
+                clearInterval(newInterval);
+              }
+            }
+          }, stepDelay);
+          
+          autoStepIntervalRef.current = newInterval;
+        }
       }
     }
   };
@@ -631,7 +643,6 @@ export default function OSISimulator() {
     setStepDelay(newDelay);
   };
 
-  // Get the current layer name
   const getCurrentLayerName = () => {
     const currentLayerId = simulationDirection === "sending" 
       ? 7 - simulationStep 
@@ -641,12 +652,10 @@ export default function OSISimulator() {
     return currentLayer ? currentLayer.name : "";
   };
 
-  // Get the selected media details
   const getSelectedMediaDetails = () => {
     return transmissionMediaTypes.find(media => media.id === selectedMedia);
   };
 
-  // Calculate current step for progress display
   const getCurrentStepNumber = () => {
     if (simulationDirection === "sending") {
       return simulationStep + 1;
@@ -655,7 +664,6 @@ export default function OSISimulator() {
     }
   };
 
-  // Render connection setup visualization
   const renderConnectionSetup = () => {
     if (!showConnectionSetup || !simulationData) return null;
     
@@ -1047,32 +1055,65 @@ export default function OSISimulator() {
                       </div>
                     </label>
                     
-                    <label className="flex items-center p-3 rounded-lg border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer transition-colors group">
-                      <div className="custom-checkbox">
-                        <input
-                          type="checkbox"
-                          checked={autoStep}
-                          onChange={() => setAutoStep(!autoStep)}
-                        />
-                        <div className="checkbox-icon">
-                          {autoStep && (
-                            <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path>
-                            </svg>
-                          )}
-                        </div>
+                    <div className="p-3 rounded-lg border border-gray-200 dark:border-gray-600">
+                      <div className="text-sm font-medium text-gray-900 dark:text-white mb-3">Simulation Mode</div>
+                      
+                      <div className="space-y-2">
+                        <label className="flex items-center p-2 rounded hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer transition-colors">
+                          <div className="custom-radio">
+                            <input
+                              type="radio"
+                              name="simulationMode"
+                              checked={!autoStep && !autoScroll}
+                              onChange={() => handleAutoModeChange('none')}
+                            />
+                            <div className="radio-icon"></div>
+                          </div>
+                          <div className="ml-3">
+                            <div className="text-sm font-medium text-gray-900 dark:text-white">Manual Navigation</div>
+                            <div className="text-xs text-gray-600 dark:text-gray-400">Navigate layers manually with buttons or arrow keys</div>
+                          </div>
+                        </label>
+                        
+                        <label className="flex items-center p-2 rounded hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer transition-colors">
+                          <div className="custom-radio">
+                            <input
+                              type="radio"
+                              name="simulationMode"
+                              checked={autoStep}
+                              onChange={() => handleAutoModeChange('step')}
+                            />
+                            <div className="radio-icon"></div>
+                          </div>
+                          <div className="ml-3">
+                            <div className="text-sm font-medium text-gray-900 dark:text-white">Auto-Step Mode</div>
+                            <div className="text-xs text-gray-600 dark:text-gray-400">Automatically advance through layers</div>
+                          </div>
+                        </label>
+                        
+                        <label className="flex items-center p-2 rounded hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer transition-colors">
+                          <div className="custom-radio">
+                            <input
+                              type="radio"
+                              name="simulationMode"
+                              checked={autoScroll}
+                              onChange={() => handleAutoModeChange('scroll')}
+                            />
+                            <div className="radio-icon"></div>
+                          </div>
+                          <div className="ml-3">
+                            <div className="text-sm font-medium text-gray-900 dark:text-white">Auto-Scroll Mode</div>
+                            <div className="text-xs text-gray-600 dark:text-gray-400">Show all layers expanded and auto-scroll through them</div>
+                          </div>
+                        </label>
                       </div>
-                      <div className="ml-3">
-                        <div className="text-sm font-medium text-gray-900 dark:text-white">Auto-Step Mode</div>
-                        <div className="text-xs text-gray-600 dark:text-gray-400">Automatically advance through layers</div>
-                      </div>
-                    </label>
+                    </div>
                     
-                    {autoStep && (
+                    {(autoStep || autoScroll) && (
                       <div className="p-3 rounded-lg border border-gray-200 dark:border-gray-600">
                         <div className="flex justify-between items-center mb-2">
                           <label className="text-sm font-medium text-gray-900 dark:text-white">
-                            Step Delay
+                            {autoStep ? "Step Delay" : "Scroll Delay"}
                           </label>
                           <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs font-medium rounded-md">
                             {stepDelay / 1000}s
@@ -1283,9 +1324,11 @@ export default function OSISimulator() {
 
           <div className="space-y-4">
             {osiLayers.map((layer) => {
-              const isActive = simulationDirection === "sending" 
-                ? layer.id >= 7 - simulationStep 
-                : layer.id <= 7 - simulationStep;
+              const isActive = autoScroll ? true : (
+                simulationDirection === "sending" 
+                  ? layer.id >= 7 - simulationStep 
+                  : layer.id <= 7 - simulationStep
+              );
               
               return (
                 <OSILayer

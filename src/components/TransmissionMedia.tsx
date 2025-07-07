@@ -10,11 +10,9 @@ interface TransmissionMediaProps {
 export default function TransmissionMedia({ mediaType, binaryData }: TransmissionMediaProps) {
   const [progress, setProgress] = useState(0);
   
-  // Start transmission animation
   useEffect(() => {
-    // Set up progress animation
     const duration = mediaType === "fiber" ? 1000 : mediaType === "wireless" ? 3000 : 2000;
-    const interval = 50; // Update every 50ms
+    const interval = 50; 
     const steps = duration / interval;
     let currentStep = 0;
     
@@ -30,15 +28,11 @@ export default function TransmissionMedia({ mediaType, binaryData }: Transmissio
     return () => clearInterval(timer);
   }, [mediaType]);
   
-  // Generate binary data visualization
   const renderBinaryVisualization = () => {
     if (!binaryData) return null;
     
-    // Use the full binary data without sample size limit
     const fullData = binaryData.replace(/\s/g, '');
     
-    // For performance reasons, we'll render a maximum of 100 bits visually
-    // but we'll show the full data in text form below
     const visualSample = fullData.length > 100 ? fullData.substring(0, 100) : fullData;
     
     const renderVisualBits = () => {
@@ -116,7 +110,6 @@ export default function TransmissionMedia({ mediaType, binaryData }: Transmissio
     );
   };
 
-  // Render different visualizations based on media type
   const renderMediaVisualization = () => {
     switch (mediaType) {
       case "cable":
