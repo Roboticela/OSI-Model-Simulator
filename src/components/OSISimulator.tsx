@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import OSILayer from "./OSILayer";
 import { processMessage } from "../utils/osiUtils";
 import TransmissionMedia from "./TransmissionMedia";
+import Image from "next/image";
 
 // Define the OSI layers
 const osiLayers = [
@@ -108,11 +109,13 @@ export default function OSISimulator() {
   const [showConnectionSetup, setShowConnectionSetup] = useState(false);
   const [showOSIInfo, setShowOSIInfo] = useState(false);
   const [showDetailedView, setShowDetailedView] = useState(true);
-  const [autoStep, setAutoStep] = useState(true);
+  const [autoStep, setAutoStep] = useState(false);
   const [stepDelay, setStepDelay] = useState(2000); // 2 seconds by default
   const [isPaused, setIsPaused] = useState(false);
   const [showTransmissionAnimation, setShowTransmissionAnimation] = useState(false);
   const [selectedMedia, setSelectedMedia] = useState("cable");
+  const [showContinueButton, setShowContinueButton] = useState(false);
+  const [showRestartButton, setShowRestartButton] = useState(false);
   
   // Reference to store interval ID for auto-stepping
   const autoStepIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -133,6 +136,7 @@ export default function OSISimulator() {
     e.preventDefault();
     if (!userMessage.trim()) return;
     
+    // Process the message and initialize simulation
     const data = processMessage(userMessage, selectedMedia);
     setSimulationData(data);
     setSimulationActive(true);
@@ -140,6 +144,16 @@ export default function OSISimulator() {
     setSimulationDirection("sending");
     setShowConnectionSetup(true);
     setIsPaused(false);
+    setShowContinueButton(false);
+    setShowRestartButton(false);
+    
+    // Clear any existing interval
+    if (autoStepIntervalRef.current) {
+      clearInterval(autoStepIntervalRef.current);
+      autoStepIntervalRef.current = null;
+    }
+    
+    console.log("Simulation initialized, auto-step:", autoStep);
     
     // Scroll to the top of the simulation container
     if (simulationContainerRef.current) {
@@ -153,7 +167,25 @@ export default function OSISimulator() {
     if (simulationDirection === "sending") {
       if (simulationStep < osiLayers.length - 1) {
         setSimulationStep(simulationStep + 1);
+        // Scroll to the active layer
+        setTimeout(() => {
+          const activeLayerElement = document.getElementById(`osi-layer-${7 - (simulationStep + 1)}`);
+          if (activeLayerElement) {
+            activeLayerElement.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        }, 50);
       } else {
+        if (autoStep) {
+          // Clear interval when reaching the end of sending phase
+          if (autoStepIntervalRef.current) {
+            clearInterval(autoStepIntervalRef.current);
+            autoStepIntervalRef.current = null;
+          }
+          // Show the continue button
+          setShowContinueButton(true);
+          return;
+        }
+        
         // Show transmission animation
         setShowTransmissionAnimation(true);
         
@@ -167,6 +199,14 @@ export default function OSISimulator() {
           setSimulationDirection("receiving");
           setSimulationStep(osiLayers.length - 1);
           setShowConnectionSetup(false);
+          
+          // Scroll to the active layer after direction change
+          setTimeout(() => {
+            const activeLayerElement = document.getElementById(`osi-layer-${7 - (osiLayers.length - 1)}`);
+            if (activeLayerElement) {
+              activeLayerElement.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
+          }, 50);
         }, transmissionTime);
         
         // Pause auto-stepping during animation
@@ -181,29 +221,77 @@ export default function OSISimulator() {
       // Receiving direction
       if (simulationStep > 0) {
         setSimulationStep(simulationStep - 1);
+        // Scroll to the active layer
+        setTimeout(() => {
+          const activeLayerElement = document.getElementById(`osi-layer-${7 - (simulationStep - 1)}`);
+          if (activeLayerElement) {
+            activeLayerElement.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        }, 50);
       } else {
+        if (autoStep) {
+          // Clear interval when reaching the end of receiving phase
+          if (autoStepIntervalRef.current) {
+            clearInterval(autoStepIntervalRef.current);
+            autoStepIntervalRef.current = null;
+          }
+          // Show the restart button
+          setShowRestartButton(true);
+          return;
+        }
+        
         // Instead of ending, loop back to sending
         setSimulationDirection("sending");
         setSimulationStep(0);
         setShowConnectionSetup(true);
+        
+        // Scroll to the active layer after direction change
+        setTimeout(() => {
+          const activeLayerElement = document.getElementById(`osi-layer-${7 - 0}`);
+          if (activeLayerElement) {
+            activeLayerElement.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        }, 50);
       }
     }
-  }, [simulationDirection, simulationStep, selectedMedia]);
+  }, [simulationDirection, simulationStep, selectedMedia, autoStep]);
 
   const handlePreviousStep = useCallback(() => {
     if (simulationDirection === "sending") {
       if (simulationStep > 0) {
         setSimulationStep(simulationStep - 1);
+        // Scroll to the active layer
+        setTimeout(() => {
+          const activeLayerElement = document.getElementById(`osi-layer-${7 - (simulationStep - 1)}`);
+          if (activeLayerElement) {
+            activeLayerElement.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        }, 50);
       } else {
         // Go to receiving direction, last step
         setSimulationDirection("receiving");
         setSimulationStep(0);
         setShowConnectionSetup(false);
+        
+        // Scroll to the active layer after direction change
+        setTimeout(() => {
+          const activeLayerElement = document.getElementById(`osi-layer-${7 - 0}`);
+          if (activeLayerElement) {
+            activeLayerElement.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        }, 50);
       }
     } else {
       // Receiving direction
       if (simulationStep < osiLayers.length - 1) {
         setSimulationStep(simulationStep + 1);
+        // Scroll to the active layer
+        setTimeout(() => {
+          const activeLayerElement = document.getElementById(`osi-layer-${7 - (simulationStep + 1)}`);
+          if (activeLayerElement) {
+            activeLayerElement.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        }, 50);
       } else {
         // Go back to sending direction with transmission animation
         setShowTransmissionAnimation(true);
@@ -216,6 +304,14 @@ export default function OSISimulator() {
           setSimulationDirection("sending");
           setSimulationStep(osiLayers.length - 1);
           setShowConnectionSetup(true);
+          
+          // Scroll to the active layer after direction change
+          setTimeout(() => {
+            const activeLayerElement = document.getElementById(`osi-layer-${7 - (osiLayers.length - 1)}`);
+            if (activeLayerElement) {
+              activeLayerElement.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
+          }, 50);
         }, transmissionTime);
       }
     }
@@ -239,20 +335,205 @@ export default function OSISimulator() {
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [simulationActive, handleNextStep, handlePreviousStep]);
 
+  // Handle continue button click
+  const handleContinue = () => {
+    // Hide continue button and start transmission animation
+    setShowContinueButton(false);
+    setShowTransmissionAnimation(true);
+    
+    // Wait for animation to complete before transitioning to receiving side
+    const transmissionTime = selectedMedia === "fiber" ? 1000 : 
+                           selectedMedia === "wireless" ? 3000 : 2000;
+    
+    setTimeout(() => {
+      setShowTransmissionAnimation(false);
+      setSimulationDirection("receiving");
+      setSimulationStep(osiLayers.length - 1); // Start at Physical layer on receiving side
+      setShowConnectionSetup(false);
+      
+      // Scroll to the active layer after direction change
+      setTimeout(() => {
+        const activeLayerElement = document.getElementById(`osi-layer-${7 - (osiLayers.length - 1)}`);
+        if (activeLayerElement) {
+          activeLayerElement.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }, 50);
+      
+      // Resume auto-stepping for receiving phase after a brief delay
+      if (autoStep && !isPaused) {
+        // First clear any existing interval
+        if (autoStepIntervalRef.current) {
+          clearInterval(autoStepIntervalRef.current);
+          autoStepIntervalRef.current = null;
+        }
+        
+        // Small delay to ensure UI updates first
+        setTimeout(() => {
+          console.log("Starting auto-step for receiving direction");
+          
+          // Start a new interval for auto-stepping through receiver layers
+          const receivingInterval = setInterval(() => {
+            setSimulationStep((prevStep) => {
+              console.log("Auto-stepping receiver, current step:", prevStep);
+              
+              // Continue stepping up through receiver layers
+              if (prevStep > 0) {
+                // Scroll to the active layer after step update
+                const newStep = prevStep - 1;
+                setTimeout(() => {
+                  const activeLayerElement = document.getElementById(`osi-layer-${7 - newStep}`);
+                  if (activeLayerElement) {
+                    activeLayerElement.scrollIntoView({ behavior: "smooth", block: "start" });
+                  }
+                }, 50);
+                return newStep;
+              } else {
+                // At the end, clear interval and show restart button
+                console.log("Reached end of receiver layers, showing restart button");
+                clearInterval(receivingInterval);
+                setShowRestartButton(true);
+                return 0;
+              }
+            });
+          }, stepDelay);
+          
+          // Store the interval reference
+          autoStepIntervalRef.current = receivingInterval;
+        }, 300); // Increased delay for more reliable UI update
+      }
+    }, transmissionTime);
+  };
+
+  // Handle restart button click
+  const handleRestart = () => {
+    // Hide restart button and reset simulation state
+    setShowRestartButton(false);
+    setSimulationDirection("sending");
+    setSimulationStep(0); // Start at Application layer (layer 7)
+    setShowConnectionSetup(true);
+    
+    // Scroll to the active layer after reset
+    setTimeout(() => {
+      const activeLayerElement = document.getElementById(`osi-layer-${7 - 0}`);
+      if (activeLayerElement) {
+        activeLayerElement.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }, 50);
+    
+    // Resume auto-stepping for sending phase
+    if (autoStep && !isPaused) {
+      // First clear any existing interval
+      if (autoStepIntervalRef.current) {
+        clearInterval(autoStepIntervalRef.current);
+        autoStepIntervalRef.current = null;
+      }
+      
+      // Small delay to ensure UI updates first
+      setTimeout(() => {
+        console.log("Starting auto-step for sending direction");
+        
+        // Start a new interval for auto-stepping through sender layers
+        const sendingInterval = setInterval(() => {
+          setSimulationStep((prevStep) => {
+            console.log("Auto-stepping sender, current step:", prevStep);
+            
+            // Continue stepping down through sender layers
+            if (prevStep < osiLayers.length - 1) {
+              // Scroll to the active layer after step update
+              const newStep = prevStep + 1;
+              setTimeout(() => {
+                const activeLayerElement = document.getElementById(`osi-layer-${7 - newStep}`);
+                if (activeLayerElement) {
+                  activeLayerElement.scrollIntoView({ behavior: "smooth", block: "start" });
+                }
+              }, 50);
+              return newStep;
+            } else {
+              // At the end, clear interval and show continue button
+              console.log("Reached end of sender layers, showing continue button");
+              clearInterval(sendingInterval);
+              setShowContinueButton(true);
+              return osiLayers.length - 1;
+            }
+          });
+        }, stepDelay);
+        
+        // Store the interval reference
+        autoStepIntervalRef.current = sendingInterval;
+      }, 300); // Increased delay for more reliable UI update
+    }
+  };
+
   // Handle auto-stepping
   useEffect(() => {
-    if (simulationActive && autoStep && !isPaused) {
+    if (simulationActive && autoStep && !isPaused && !showContinueButton && !showRestartButton) {
       // Clear any existing interval
       if (autoStepIntervalRef.current) {
         clearInterval(autoStepIntervalRef.current);
+        autoStepIntervalRef.current = null;
       }
+      
+      console.log("Setting up auto-step in useEffect, direction:", simulationDirection);
       
       // Set new interval for auto-stepping
       autoStepIntervalRef.current = setInterval(() => {
-        handleNextStep();
+        if (simulationDirection === "sending") {
+          setSimulationStep(prevStep => {
+            console.log("Auto-stepping sender (useEffect), current step:", prevStep);
+            
+            if (prevStep < osiLayers.length - 1) {
+              // Scroll to the active layer after step update
+              const newStep = prevStep + 1;
+              setTimeout(() => {
+                const activeLayerElement = document.getElementById(`osi-layer-${7 - newStep}`);
+                if (activeLayerElement) {
+                  activeLayerElement.scrollIntoView({ behavior: "smooth", block: "start" });
+                }
+              }, 50);
+              return newStep;
+            } else {
+              // Clear interval when reaching the end of sending phase
+              if (autoStepIntervalRef.current) {
+                clearInterval(autoStepIntervalRef.current);
+                autoStepIntervalRef.current = null;
+              }
+              console.log("Reached end of sender layers (useEffect), showing continue button");
+              // Show the continue button
+              setShowContinueButton(true);
+              return osiLayers.length - 1;
+            }
+          });
+        } else {
+          setSimulationStep(prevStep => {
+            console.log("Auto-stepping receiver (useEffect), current step:", prevStep);
+            
+            if (prevStep > 0) {
+              // Scroll to the active layer after step update
+              const newStep = prevStep - 1;
+              setTimeout(() => {
+                const activeLayerElement = document.getElementById(`osi-layer-${7 - newStep}`);
+                if (activeLayerElement) {
+                  activeLayerElement.scrollIntoView({ behavior: "smooth", block: "start" });
+                }
+              }, 50);
+              return newStep;
+            } else {
+              // Clear interval when reaching the end of receiving phase
+              if (autoStepIntervalRef.current) {
+                clearInterval(autoStepIntervalRef.current);
+                autoStepIntervalRef.current = null;
+              }
+              console.log("Reached end of receiver layers (useEffect), showing restart button");
+              // Show the restart button
+              setShowRestartButton(true);
+              return 0;
+            }
+          });
+        }
       }, stepDelay);
     } else if (autoStepIntervalRef.current) {
       // Clear interval if simulation is not active or auto-step is disabled
+      console.log("Clearing auto-step interval in useEffect");
       clearInterval(autoStepIntervalRef.current);
       autoStepIntervalRef.current = null;
     }
@@ -261,9 +542,10 @@ export default function OSISimulator() {
     return () => {
       if (autoStepIntervalRef.current) {
         clearInterval(autoStepIntervalRef.current);
+        autoStepIntervalRef.current = null;
       }
     };
-  }, [simulationActive, autoStep, isPaused, stepDelay, handleNextStep]);
+  }, [simulationActive, autoStep, isPaused, stepDelay, simulationDirection, showContinueButton, showRestartButton]);
 
   const resetSimulation = () => {
     setSimulationActive(false);
@@ -273,6 +555,8 @@ export default function OSISimulator() {
     setShowConnectionSetup(false);
     setIsPaused(false);
     setShowTransmissionAnimation(false);
+    setShowContinueButton(false);
+    setShowRestartButton(false);
     
     // Clear interval if it exists
     if (autoStepIntervalRef.current) {
@@ -282,7 +566,64 @@ export default function OSISimulator() {
   };
 
   const togglePause = () => {
-    setIsPaused(!isPaused);
+    const newPausedState = !isPaused;
+    setIsPaused(newPausedState);
+    
+    console.log("Toggle pause:", newPausedState);
+    
+    // Handle auto-stepping when toggling pause state
+    if (autoStep) {
+      if (newPausedState) {
+        // Pause: clear the interval
+        if (autoStepIntervalRef.current) {
+          console.log("Pausing auto-step, clearing interval");
+          clearInterval(autoStepIntervalRef.current);
+          autoStepIntervalRef.current = null;
+        }
+      } else {
+        // Resume: restart auto-stepping based on current state
+        console.log("Resuming auto-step, direction:", simulationDirection);
+        
+        // Don't restart if we're at a point where continue/restart buttons should show
+        if ((simulationDirection === "sending" && simulationStep === osiLayers.length - 1) ||
+            (simulationDirection === "receiving" && simulationStep === 0)) {
+          console.log("At end of phase, not restarting auto-step");
+          return;
+        }
+        
+        // Clear any existing interval first
+        if (autoStepIntervalRef.current) {
+          clearInterval(autoStepIntervalRef.current);
+        }
+        
+        // Create new interval based on current direction
+        const newInterval = setInterval(() => {
+          if (simulationDirection === "sending") {
+            setSimulationStep(prevStep => {
+              if (prevStep < osiLayers.length - 1) {
+                return prevStep + 1;
+              } else {
+                clearInterval(newInterval);
+                setShowContinueButton(true);
+                return osiLayers.length - 1;
+              }
+            });
+          } else {
+            setSimulationStep(prevStep => {
+              if (prevStep > 0) {
+                return prevStep - 1;
+              } else {
+                clearInterval(newInterval);
+                setShowRestartButton(true);
+                return 0;
+              }
+            });
+          }
+        }, stepDelay);
+        
+        autoStepIntervalRef.current = newInterval;
+      }
+    }
   };
 
   const handleSpeedChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -455,13 +796,24 @@ export default function OSISimulator() {
             <div className="relative p-8 md:p-12">
               <div className="text-center">
                 <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 shadow-lg mb-6">
-                  <img src="/favicon.svg" alt="OSI Simulator Icon" className="w-18 h-18" />
+                  <Image src="/favicon.svg" alt="OSI Simulator Icon" className="w-18 h-18" width={72} height={72} />
                 </div>
                 <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-4">
                   OSI Model Simulator
                 </h1>
                 <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed">
                   Experience the journey of data through all seven layers of the OSI model with our interactive, step-by-step simulation
+                </p>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                  <span className="inline-flex items-center">
+                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                    Use arrow keys to navigate through layers during simulation
+                  </span>
                 </p>
               </div>
             </div>
@@ -716,49 +1068,51 @@ export default function OSISimulator() {
                       </div>
                     </label>
                     
-                    <div className="p-3 rounded-lg border border-gray-200 dark:border-gray-600">
-                      <div className="flex justify-between items-center mb-2">
-                        <label className="text-sm font-medium text-gray-900 dark:text-white">
-                          Step Delay
-                        </label>
-                        <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs font-medium rounded-md">
-                          {stepDelay / 1000}s
-                        </span>
-                      </div>
-                      <div className="relative mt-6 mb-6">
-                        <div className="slider-track" style={{ top: "50%" }}>
-                          <div className="slider-track-inner"></div>
+                    {autoStep && (
+                      <div className="p-3 rounded-lg border border-gray-200 dark:border-gray-600">
+                        <div className="flex justify-between items-center mb-2">
+                          <label className="text-sm font-medium text-gray-900 dark:text-white">
+                            Step Delay
+                          </label>
+                          <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs font-medium rounded-md">
+                            {stepDelay / 1000}s
+                          </span>
                         </div>
-                        <input
-                          type="range"
-                          min="500"
-                          max="5000"
-                          step="500"
-                          value={stepDelay}
-                          onChange={handleSpeedChange}
-                          className="custom-slider"
-                          style={{
-                            WebkitAppearance: 'none',
-                            appearance: 'none'
-                          }}
-                          aria-label="Step delay adjustment"
-                        />
+                        <div className="relative mt-6 mb-6">
+                          <div className="slider-track" style={{ top: "50%" }}>
+                            <div className="slider-track-inner"></div>
+                          </div>
+                          <input
+                            type="range"
+                            min="500"
+                            max="5000"
+                            step="500"
+                            value={stepDelay}
+                            onChange={handleSpeedChange}
+                            className="custom-slider"
+                            style={{
+                              WebkitAppearance: 'none',
+                              appearance: 'none'
+                            }}
+                            aria-label="Step delay adjustment"
+                          />
+                        </div>
+                        <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
+                          <span className="flex items-center">
+                            <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
+                            Fast
+                          </span>
+                          <span className="flex items-center">
+                            Slow
+                            <svg className="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                          </span>
+                        </div>
                       </div>
-                      <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
-                        <span className="flex items-center">
-                          <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                          </svg>
-                          Fast
-                        </span>
-                        <span className="flex items-center">
-                          Slow
-                          <svg className="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                          </svg>
-                        </span>
-                      </div>
-                    </div>
+                    )}
                   </div>
                 </div>
                 
@@ -798,15 +1152,28 @@ export default function OSISimulator() {
               
               {/* Submit Button */}
               <div className="pt-4">
-                <button
-                  type="submit"
-                  className="w-full md:w-auto inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-gradient-to-r from-blue-600 to-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 shadow-lg hover:shadow-xl btn-hover-effect"
-                >
-                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h1m4 0h1m-6-8V4a2 2 0 012-2h8a2 2 0 012 2v2m-6 12V8a2 2 0 012-2h4a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2z"></path>
-                  </svg>
-                  Start OSI Simulation
-                </button>
+                <div className="flex flex-col md:flex-row items-center">
+                  <button
+                    type="submit"
+                    className="w-full md:w-auto inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-gradient-to-r from-blue-600 to-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 shadow-lg hover:shadow-xl btn-hover-effect"
+                  >
+                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h1m4 0h1m-6-8V4a2 2 0 012-2h8a2 2 0 012 2v2m-6 12V8a2 2 0 012-2h4a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2z"></path>
+                    </svg>
+                    Start OSI Simulation
+                  </button>
+                  <div className="text-sm text-gray-500 dark:text-gray-400 mt-3 md:mt-0 md:ml-4 flex items-center">
+                    <span className="inline-flex items-center">
+                      <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
+                      </svg>
+                      <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
+                      </svg>
+                      Use arrow keys to navigate layers
+                    </span>
+                  </div>
+                </div>
               </div>
             </form>
           </div>
@@ -831,7 +1198,16 @@ export default function OSISimulator() {
               </p>
             </div>
             <div className="flex space-x-2">
-              {autoStep && (
+              {showRestartButton && (
+                <button
+                  onClick={handleRestart}
+                  className="px-4 py-2 bg-green-600 text-white rounded-md focus-ring btn-hover-effect animate-pulse"
+                >
+                  Restart Simulation
+                </button>
+              )}
+              
+              {autoStep && !showRestartButton && (
                 <button
                   onClick={togglePause}
                   className={`px-4 py-2 ${
@@ -847,6 +1223,7 @@ export default function OSISimulator() {
               <button
                 onClick={handlePreviousStep}
                 className="px-4 py-2 bg-gray-600 text-white rounded-md focus-ring btn-hover-effect"
+                disabled={autoStep && !isPaused}
               >
                 ← Previous
               </button>
@@ -854,6 +1231,7 @@ export default function OSISimulator() {
               <button
                 onClick={handleNextStep}
                 className="px-4 py-2 bg-blue-600 text-white rounded-md focus-ring btn-hover-effect"
+                disabled={autoStep && !isPaused}
               >
                 Next →
               </button>
@@ -919,10 +1297,22 @@ export default function OSISimulator() {
                   data={simulationData}
                   showDetailedView={showDetailedView}
                   mediaType={selectedMedia}
+                  id={`osi-layer-${layer.id}`}
                 />
               );
             })}
           </div>
+          
+          {showContinueButton && (
+            <div className="flex justify-center mt-8 mb-4">
+              <button
+                onClick={handleContinue}
+                className="px-8 py-3 bg-green-600 text-white text-lg font-medium rounded-lg shadow-lg hover:shadow-xl focus-ring btn-hover-effect animate-pulse"
+              >
+                Continue to Receiver Side
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>

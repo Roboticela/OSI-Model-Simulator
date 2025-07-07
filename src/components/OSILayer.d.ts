@@ -45,6 +45,7 @@ export interface OSILayerProps {
   } | null;
   showDetailedView: boolean;
   mediaType?: string;
+  id?: string;
 }
 
 export default function OSILayer(props: OSILayerProps): ReactElement; 

@@ -48,9 +48,10 @@ interface OSILayerProps {
   } | null;
   showDetailedView: boolean;
   mediaType?: string;
+  id: string;
 }
 
-export default function OSILayer({ layer, active, currentStep, direction, data, showDetailedView, mediaType = "cable" }: OSILayerProps) {
+export default function OSILayer({ layer, active, currentStep, direction, data, showDetailedView, mediaType = "cable", id }: OSILayerProps) {
   const layerData = data ? getLayerData(data, layer.id, direction) : null;
   const isCurrentLayer = 
     (direction === "sending" && layer.id === 7 - currentStep) || 
@@ -59,14 +60,10 @@ export default function OSILayer({ layer, active, currentStep, direction, data, 
   // Reference for auto-scrolling
   const layerRef = useRef<HTMLDivElement>(null);
   
-  // Auto-scroll to the current layer
+  // We're now using the scrolling functionality from OSISimulator.tsx instead
+  // Keeping the ref for potential future use
   useEffect(() => {
-    if (isCurrentLayer && layerRef.current) {
-      layerRef.current.scrollIntoView({ 
-        behavior: "smooth", 
-        block: "center" 
-      });
-    }
+    // Removed auto-scrolling from here as it's now handled by the parent component
   }, [isCurrentLayer, currentStep, direction]);
 
   // Get appropriate icons based on layer
@@ -365,14 +362,15 @@ export default function OSILayer({ layer, active, currentStep, direction, data, 
   };
 
   return (
-    <div
-      ref={layerRef}
-      className={`p-4 border-2 rounded-md transition-all duration-300 ${
-        layer.color
-      } ${layer.borderColor} ${
-        isCurrentLayer ? "ring-2 ring-blue-500 shadow-lg layer-highlight" : ""
-      } ${active ? "opacity-100" : "opacity-50"}`}
-    >
+          <div
+        ref={layerRef}
+        id={id}
+        className={`p-4 border-2 rounded-md transition-all duration-300 ${
+          layer.color
+        } ${layer.borderColor} ${
+          isCurrentLayer ? "ring-2 ring-blue-500 shadow-lg layer-highlight" : ""
+        } ${active ? "opacity-100" : "opacity-50"}`}
+      >
       <div className="flex justify-between items-center mb-2">
         <h3 className="text-lg font-semibold flex items-center gap-2">
           <span className="text-xl">{layer.id === 1 ? getMediaIcon() : getLayerIcon()}</span>

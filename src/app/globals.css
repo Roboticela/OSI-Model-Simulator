@@ -31,6 +31,11 @@ body {
     rgb(var(--background-start-rgb));
 }
 
+/* Remove default browser outline on textareas */
+textarea:focus {
+  outline: none;
+}
+
 /* Layer highlight animation */
 .layer-highlight {
   animation: pulse-highlight 2s infinite;
