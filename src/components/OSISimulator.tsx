@@ -159,8 +159,6 @@ export default function OSISimulator() {
       autoStepIntervalRef.current = null;
     }
     
-    console.log("Simulation initialized, auto-step:", autoStep, "auto-scroll:", autoScroll);
-    
     if (simulationContainerRef.current) {
       setTimeout(() => {
         simulationContainerRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -345,11 +343,8 @@ export default function OSISimulator() {
         }
         
         setTimeout(() => {
-          console.log("Starting auto-step for receiving direction");
-          
           const receivingInterval = setInterval(() => {
             setSimulationStep((prevStep) => {
-              console.log("Auto-stepping receiver, current step:", prevStep);
               
               if (prevStep > 0) {
                 const newStep = prevStep - 1;
@@ -361,7 +356,6 @@ export default function OSISimulator() {
                 }, 50);
                 return newStep;
               } else {
-                console.log("Reached end of receiver layers, showing restart button");
                 clearInterval(receivingInterval);
                 setShowRestartButton(true);
                 return 0;
@@ -395,12 +389,8 @@ export default function OSISimulator() {
       }
       
       setTimeout(() => {
-        console.log("Starting auto-step for sending direction");
-        
         const sendingInterval = setInterval(() => {
           setSimulationStep((prevStep) => {
-            console.log("Auto-stepping sender, current step:", prevStep);
-            
             if (prevStep < osiLayers.length - 1) {
               const newStep = prevStep + 1;
               setTimeout(() => {
@@ -411,7 +401,6 @@ export default function OSISimulator() {
               }, 50);
               return newStep;
             } else {
-              console.log("Reached end of sender layers, showing continue button");
               clearInterval(sendingInterval);
               setShowContinueButton(true);
               return osiLayers.length - 1;
@@ -439,13 +428,9 @@ export default function OSISimulator() {
     }
     
     if (autoStep) {
-      console.log("Setting up auto-step in useEffect, direction:", simulationDirection);
-
       autoStepIntervalRef.current = setInterval(() => {
         if (simulationDirection === "sending") {
           setSimulationStep(prevStep => {
-            console.log("Auto-stepping sender (useEffect), current step:", prevStep);
-            
             if (prevStep < osiLayers.length - 1) {
               const newStep = prevStep + 1;
               setTimeout(() => {
@@ -460,15 +445,12 @@ export default function OSISimulator() {
                 clearInterval(autoStepIntervalRef.current);
                 autoStepIntervalRef.current = null;
               }
-              console.log("Reached end of sender layers (useEffect), showing continue button");
               setShowContinueButton(true);
               return osiLayers.length - 1;
             }
           });
         } else {
           setSimulationStep(prevStep => {
-            console.log("Auto-stepping receiver (useEffect), current step:", prevStep);
-            
             if (prevStep > 0) {
               const newStep = prevStep - 1;
               setTimeout(() => {
@@ -483,7 +465,6 @@ export default function OSISimulator() {
                 clearInterval(autoStepIntervalRef.current);
                 autoStepIntervalRef.current = null;
               }
-              console.log("Reached end of receiver layers (useEffect), showing restart button");
               setShowRestartButton(true);
               return 0;
             }
@@ -491,8 +472,6 @@ export default function OSISimulator() {
         }
       }, stepDelay);
     } else if (autoScroll) {
-      console.log("Setting up auto-scroll in useEffect");
-      
       let currentLayerIndex = 0;
       
       autoStepIntervalRef.current = setInterval(() => {
@@ -553,22 +532,16 @@ export default function OSISimulator() {
     const newPausedState = !isPaused;
     setIsPaused(newPausedState);
     
-    console.log("Toggle pause:", newPausedState);
-    
     if (autoStep || autoScroll) {
       if (newPausedState) {
         if (autoStepIntervalRef.current) {
-          console.log("Pausing auto-mode, clearing interval");
           clearInterval(autoStepIntervalRef.current);
           autoStepIntervalRef.current = null;
         }
       } else {
-        if (autoStep) {
-          console.log("Resuming auto-step, direction:", simulationDirection);
-          
+        if (autoStep) { 
           if ((simulationDirection === "sending" && simulationStep === osiLayers.length - 1) ||
               (simulationDirection === "receiving" && simulationStep === 0)) {
-            console.log("At end of phase, not restarting auto-step");
             return;
           }
           
@@ -601,9 +574,7 @@ export default function OSISimulator() {
           }, stepDelay);
           
           autoStepIntervalRef.current = newInterval;
-        } else if (autoScroll) {
-          console.log("Resuming auto-scroll");
-          
+        } else if (autoScroll) {  
           if (autoStepIntervalRef.current) {
             clearInterval(autoStepIntervalRef.current);
           }

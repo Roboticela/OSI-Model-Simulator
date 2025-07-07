@@ -1,7 +1,7 @@
-import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Script from "next/script";
+import { metadata } from "./metadata";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,25 +13,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: {
-    default: "OSI Model Simulator - Interactive Network Visualization",
-    template: "%s | OSI Model Simulator"
-  },
-  description: "An interactive visualization tool for exploring the OSI (Open Systems Interconnection) model's seven layers and understanding network communication protocols.",
-  keywords: ["OSI Model", "Network Layers", "Network Simulation", "Data Transmission", "Computer Networks", "Educational Tool"],
-  authors: [{ name: "Roboticela" }],
-  creator: "Roboticela",
-  publisher: "Roboticela",
-  icons: {
-    icon: [
-      { url: "/favicon.svg", type: "image/svg+xml" }
-    ],
-    apple: [
-      { url: "/apple-touch-icon.svg", type: "image/svg+xml" }
-    ]
-  }
-};
+export { metadata };
 
 export default function RootLayout({
   children,
@@ -39,10 +21,27 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="scroll-smooth">
+    <html lang="en" className="scroll-smooth" suppressHydrationWarning>
       <head>
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.svg" type="image/svg+xml" />
+        {/* Theme initialization script - must be inline for immediate execution */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  const storedTheme = localStorage.getItem('theme');
+                  const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                  const theme = storedTheme || (systemPrefersDark ? 'dark' : 'light');
+                  document.documentElement.classList.add(theme);
+                } catch (e) {
+                  console.error('Theme initialization failed:', e);
+                }
+              })();
+            `,
+          }}
+        />
         {/* Microsoft Clarity Analytics */}
         <Script id="microsoft-clarity" strategy="afterInteractive">
           {`

@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import OSISimulator from "../components/OSISimulator";
 import AnimatedTitle from "../components/AnimatedTitle";
+import ThemeToggle from "../components/ThemeToggle";
 
 export default function Home() {
   return (
@@ -41,6 +42,7 @@ export default function Home() {
               </svg>
               Learn about OSI
             </a>
+            <ThemeToggle />
           </div>
         </header>
         

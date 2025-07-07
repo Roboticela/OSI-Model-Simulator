@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 
 :root {
   --foreground-rgb: 0, 0, 0;
@@ -6,12 +7,10 @@
   --background-end-rgb: 255, 255, 255;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+.dark {
+  --foreground-rgb: 255, 255, 255;
+  --background-start-rgb: 0, 0, 0;
+  --background-end-rgb: 0, 0, 0;
 }
 
 html {
@@ -255,67 +254,60 @@ textarea:focus {
 }
 
 .slider-track {
-  @apply absolute inset-0 flex items-center;
-  pointer-events: none;
+  @apply absolute h-1 rounded-full bg-gray-200 dark:bg-gray-700 left-0 right-0 bottom-[9px];
 }
 
 .slider-track-inner {
-  @apply h-1 w-full bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full;
+  @apply h-full rounded-full bg-blue-500 dark:bg-blue-400;
 }
 
-/* Custom button animations */
 .btn-hover-effect {
   @apply relative overflow-hidden;
 }
 
 .btn-hover-effect:after {
   content: '';
-  @apply absolute inset-0 bg-white opacity-0 transition-opacity;
+  @apply absolute inset-0 bg-black opacity-0 transition-opacity duration-200;
 }
 
 .btn-hover-effect:hover:after {
-  @apply opacity-20;
+  @apply opacity-5 dark:opacity-20;
 }
 
 .btn-hover-effect:active:after {
-  @apply opacity-30;
+  @apply opacity-10 dark:opacity-30;
 }
 
 /* Scrollbar styling */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  @apply w-2 h-2;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  @apply bg-gray-100 dark:bg-gray-800 rounded;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 4px;
+  @apply bg-gray-300 dark:bg-gray-600 rounded hover:bg-gray-400 dark:hover:bg-gray-500 transition-colors;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  @apply bg-gray-400 dark:bg-gray-500;
 }
 
 /* Dark mode scrollbar */
-@media (prefers-color-scheme: dark) {
-  ::-webkit-scrollbar-track {
-    background: #333;
-  }
-  
-  ::-webkit-scrollbar-thumb {
-    background: #666;
-  }
-  
-  ::-webkit-scrollbar-thumb:hover {
-    background: #888;
-  }
+.dark ::-webkit-scrollbar-track {
+  @apply bg-gray-800;
 }
 
-/* Animation utilities */
+.dark ::-webkit-scrollbar-thumb {
+  @apply bg-gray-600;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-500;
+}
+
 @keyframes float {
   0% {
     transform: translateY(0px);
@@ -329,23 +321,22 @@ textarea:focus {
 }
 
 .animate-float {
-  animation: float 6s ease-in-out infinite;
+  animation: float 4s ease-in-out infinite;
 }
 
 @keyframes spin-slow {
-  from {
+  0% {
     transform: rotate(0deg);
   }
-  to {
+  100% {
     transform: rotate(360deg);
   }
 }
 
 .animate-spin-slow {
-  animation: spin-slow 8s linear infinite;
+  animation: spin-slow 10s linear infinite;
 }
 
-/* Custom focus styles */
 .focus-ring {
-  @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900;
+  @apply focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:ring-offset-2 dark:focus:ring-offset-gray-900;
 }
