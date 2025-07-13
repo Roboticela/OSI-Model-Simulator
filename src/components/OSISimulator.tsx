@@ -107,7 +107,6 @@ export default function OSISimulator() {
   const [showOSIInfo, setShowOSIInfo] = useState(false);
   const [showDetailedView, setShowDetailedView] = useState(true);
   const [autoStep, setAutoStep] = useState(false);
-  const [autoScroll, setAutoScroll] = useState(false);
   const [stepDelay, setStepDelay] = useState(2000);
   const [isPaused, setIsPaused] = useState(false);
   const [showTransmissionAnimation, setShowTransmissionAnimation] = useState(false);
@@ -130,13 +129,10 @@ export default function OSISimulator() {
   const handleAutoModeChange = (mode: 'step' | 'scroll' | 'none') => {
     if (mode === 'step') {
       setAutoStep(true);
-      setAutoScroll(false);
     } else if (mode === 'scroll') {
       setAutoStep(false);
-      setAutoScroll(false);
     } else {
       setAutoStep(false);
-      setAutoScroll(false);
     }
   };
 
