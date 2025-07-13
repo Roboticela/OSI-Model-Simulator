@@ -133,7 +133,7 @@ export default function OSISimulator() {
       setAutoScroll(false);
     } else if (mode === 'scroll') {
       setAutoStep(false);
-      setAutoScroll(true);
+      setAutoScroll(false);
     } else {
       setAutoStep(false);
       setAutoScroll(false);
@@ -414,7 +414,7 @@ export default function OSISimulator() {
   };
 
   useEffect(() => {
-    if (!simulationActive || (!autoStep && !autoScroll) || isPaused || showContinueButton || showRestartButton) {
+    if (!simulationActive || !autoStep || isPaused || showContinueButton || showRestartButton) {
       if (autoStepIntervalRef.current) {
         clearInterval(autoStepIntervalRef.current);
         autoStepIntervalRef.current = null;
@@ -471,36 +471,6 @@ export default function OSISimulator() {
           });
         }
       }, stepDelay);
-    } else if (autoScroll) {
-      let currentLayerIndex = 0;
-      
-      autoStepIntervalRef.current = setInterval(() => {
-        const layerId = osiLayers[currentLayerIndex].id;
-        const layerElement = document.getElementById(`osi-layer-${layerId}`);
-        
-        if (layerElement) {
-          layerElement.scrollIntoView({ behavior: "smooth", block: "start" });
-        }
-        
-        currentLayerIndex = (currentLayerIndex + 1) % osiLayers.length;
-        
-        if (currentLayerIndex === 0) {
-          if (simulationDirection === "sending") {
-            setShowContinueButton(true);
-            if (autoStepIntervalRef.current) {
-              clearInterval(autoStepIntervalRef.current);
-              autoStepIntervalRef.current = null;
-            }
-          } 
-          else if (simulationDirection === "receiving") {
-            setShowRestartButton(true);
-            if (autoStepIntervalRef.current) {
-              clearInterval(autoStepIntervalRef.current);
-              autoStepIntervalRef.current = null;
-            }
-          }
-        }
-      }, stepDelay);
     }
     
     return () => {
@@ -509,7 +479,7 @@ export default function OSISimulator() {
         autoStepIntervalRef.current = null;
       }
     };
-  }, [simulationActive, autoStep, autoScroll, isPaused, stepDelay, simulationDirection, showContinueButton, showRestartButton]);
+  }, [simulationActive, autoStep, isPaused, stepDelay, simulationDirection, showContinueButton, showRestartButton]);
 
   const resetSimulation = () => {
     setSimulationActive(false);
@@ -532,7 +502,7 @@ export default function OSISimulator() {
     const newPausedState = !isPaused;
     setIsPaused(newPausedState);
     
-    if (autoStep || autoScroll) {
+    if (autoStep) {
       if (newPausedState) {
         if (autoStepIntervalRef.current) {
           clearInterval(autoStepIntervalRef.current);
@@ -570,36 +540,6 @@ export default function OSISimulator() {
                   return 0;
                 }
               });
-            }
-          }, stepDelay);
-          
-          autoStepIntervalRef.current = newInterval;
-        } else if (autoScroll) {  
-          if (autoStepIntervalRef.current) {
-            clearInterval(autoStepIntervalRef.current);
-          }
-          
-          let currentLayerIndex = 0;
-          
-          const newInterval = setInterval(() => { 
-            const layerId = osiLayers[currentLayerIndex].id;
-            const layerElement = document.getElementById(`osi-layer-${layerId}`);
-            
-            if (layerElement) {
-              layerElement.scrollIntoView({ behavior: "smooth", block: "start" });
-            }
-            
-            currentLayerIndex = (currentLayerIndex + 1) % osiLayers.length;
-            
-            if (currentLayerIndex === 0) {
-              if (simulationDirection === "sending") {
-                setShowContinueButton(true);
-                clearInterval(newInterval);
-              } 
-              else if (simulationDirection === "receiving") {
-                setShowRestartButton(true);
-                clearInterval(newInterval);
-              }
             }
           }, stepDelay);
           
@@ -1035,7 +975,7 @@ export default function OSISimulator() {
                             <input
                               type="radio"
                               name="simulationMode"
-                              checked={!autoStep && !autoScroll}
+                              checked={!autoStep}
                               onChange={() => handleAutoModeChange('none')}
                             />
                             <div className="radio-icon"></div>
@@ -1062,12 +1002,13 @@ export default function OSISimulator() {
                           </div>
                         </label>
                         
+                        {/* Auto-scroll option hidden
                         <label className="flex items-center p-2 rounded hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer transition-colors">
                           <div className="custom-radio">
                             <input
                               type="radio"
                               name="simulationMode"
-                              checked={autoScroll}
+                              checked={false}
                               onChange={() => handleAutoModeChange('scroll')}
                             />
                             <div className="radio-icon"></div>
@@ -1077,14 +1018,15 @@ export default function OSISimulator() {
                             <div className="text-xs text-gray-600 dark:text-gray-400">Show all layers expanded and auto-scroll through them</div>
                           </div>
                         </label>
+                        */}
                       </div>
                     </div>
                     
-                    {(autoStep || autoScroll) && (
+                    {autoStep && (
                       <div className="p-3 rounded-lg border border-gray-200 dark:border-gray-600">
                         <div className="flex justify-between items-center mb-2">
                           <label className="text-sm font-medium text-gray-900 dark:text-white">
-                            {autoStep ? "Step Delay" : "Scroll Delay"}
+                            Step Delay
                           </label>
                           <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs font-medium rounded-md">
                             {stepDelay / 1000}s
@@ -1295,7 +1237,7 @@ export default function OSISimulator() {
 
           <div className="space-y-4">
             {osiLayers.map((layer) => {
-              const isActive = autoScroll ? true : (
+              const isActive = (
                 simulationDirection === "sending" 
                   ? layer.id >= 7 - simulationStep 
                   : layer.id <= 7 - simulationStep
