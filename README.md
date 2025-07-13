@@ -46,6 +46,7 @@
 - [Screenshots](#-screenshots)
 - [Installation](#-installation)
 - [Usage](#-usage)
+- [Contact Form Setup](#-contact-form-setup)
 - [Technologies](#-technologies)
 - [Educational Purpose](#-educational-purpose)
 - [Project Structure](#-project-structure)
@@ -72,6 +73,7 @@ The OSI Model Simulator is an interactive educational tool designed to help user
 - **🔄 Protocol Simulation** - Experience realistic simulations of common networking protocols at each layer
 - **📱 Responsive Design** - Enjoy a seamless experience across desktop, tablet, and mobile devices
 - **🎨 Customizable Scenarios** - Create and modify network scenarios to observe different behaviors and outcomes
+- **📞 Contact Form** - Easily reach out to the team with questions or feedback through the integrated contact form
 
 <br>
 
@@ -182,6 +184,12 @@ cd osi-model-simulator
 # Install dependencies
 npm install
 
+# Create a .env file based on example.env
+cp example.env .env.local
+
+# Update the .env.local file with your SMTP settings
+# Edit .env.local
+
 # Run the development server
 npm run dev
 ```
@@ -192,6 +200,7 @@ Once the development server is running, open [http://localhost:3000](http://loca
 
 - Node.js 18.0 or later
 - npm 9.0 or later
+- SMTP server for contact form functionality (optional)
 
 <br>
 
@@ -203,6 +212,44 @@ Once the development server is running, open [http://localhost:3000](http://loca
 4. **Run Simulation**: Click "Send Message" to start the simulation
 5. **Observe the Process**: Watch as your message travels through each layer
 6. **Explore Details**: Click on any layer to see detailed information about the processes occurring
+7. **Contact Support**: Use the contact page to reach out with questions or feedback
+
+<br>
+
+## 📧 Contact Form Setup
+
+The OSI Model Simulator includes a contact form that allows users to send messages directly to the team. To set up the contact form functionality:
+
+1. **Configure SMTP Settings**: Update the `.env.local` file with your SMTP server details:
+
+```env
+SMTP_HOST=your-smtp-server.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=your-email@example.com
+SMTP_PASSWORD=your-password
+SMTP_FROM=OSI Model Simulator <noreply@yourdomain.com>
+CONTACT_EMAIL=recipient@yourdomain.com
+```
+
+2. **Environment Variables**:
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `SMTP_HOST` | Your SMTP server hostname | smtp.gmail.com |
+| `SMTP_PORT` | SMTP server port | 587 |
+| `SMTP_SECURE` | Whether to use TLS (true/false) | false |
+| `SMTP_USER` | SMTP authentication username | your-email@example.com |
+| `SMTP_PASSWORD` | SMTP authentication password | your-password |
+| `SMTP_FROM` | Sender email address | OSI Model Simulator <noreply@yourdomain.com> |
+| `CONTACT_EMAIL` | Recipient email address | team@yourdomain.com |
+
+3. **Testing the Contact Form**:
+   - Navigate to the Contact page at `/contact`
+   - Fill out the form with your name, email, and message
+   - Submit the form to test the email functionality
+
+> **Note**: For development purposes, you can use services like [Mailtrap](https://mailtrap.io/) or [Ethereal](https://ethereal.email/) to test email sending without delivering actual emails.
 
 <br>
 
@@ -214,6 +261,9 @@ This project leverages modern web technologies to provide a seamless and interac
 - **React**: JavaScript library for building dynamic and responsive user interfaces with reusable components
 - **TypeScript**: Strongly typed programming language that builds on JavaScript, adding static type definitions
 - **Tailwind CSS**: Utility-first CSS framework for creating custom designs without leaving your HTML
+- **Nodemailer**: Module for Node.js applications to allow easy email sending
+- **React Hook Form**: Performant, flexible and extensible forms with easy-to-use validation
+- **Yup**: JavaScript schema builder for value parsing and validation
 
 <br>
 

@@ -30,19 +30,39 @@ export default function Home() {
             subtitle="Experience the journey of data through all seven layers of the OSI model with our interactive, step-by-step simulation designed for learning and exploration"
           />
           
-          <div className="mt-8 flex flex-wrap gap-3 justify-center">
-            <a 
-              href="https://en.wikipedia.org/wiki/OSI_model" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="inline-flex items-center px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+          <div className="mt-8 flex flex-col justify-center text-nowrap items-center gap-4">
+            <div className="flex justify-center gap-3 h-full">
+              <a 
+                href="https://en.wikipedia.org/wiki/OSI_model" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+              >
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                </svg>
+                Learn about OSI
+              </a>
+              <ThemeToggle />
+              <Link 
+                href="/contact"
+                className="hidden md:flex items-center px-6 py-2.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+              >
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                </svg>
+                Contact Us
+              </Link>
+            </div>
+            <Link 
+              href="/contact"
+              className="flex md:hidden lg:hidden items-center px-6 py-2.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors"
             >
               <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
               </svg>
-              Learn about OSI
-            </a>
-            <ThemeToggle />
+              Contact Us
+            </Link>
           </div>
         </header>
         
@@ -55,6 +75,7 @@ export default function Home() {
           <div className="mt-2 flex justify-center space-x-4">
             <Link href="/privacy" className="hover:text-gray-700 dark:hover:text-gray-300">Privacy Policy</Link>
             <Link href="/terms" className="hover:text-gray-700 dark:hover:text-gray-300">Terms of Service</Link>
+            <Link href="/contact" className="hover:text-gray-700 dark:hover:text-gray-300">Contact Us</Link>
           </div>
           <p className="mt-2">
             <a 
