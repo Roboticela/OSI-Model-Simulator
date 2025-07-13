@@ -133,10 +133,9 @@ export async function POST(request: Request) {
 
     try {
       await transporter.verify();
-      
-      const info = await transporter.sendMail(mailOptions);
+      await transporter.sendMail(mailOptions);
       return NextResponse.json({ success: true });
-    } catch (emailError) {
+    } catch {
       try {
         const secureTransporter = nodemailer.createTransport({
           host,
@@ -153,13 +152,13 @@ export async function POST(request: Request) {
         
         await secureTransporter.verify();
         
-        const info = await secureTransporter.sendMail(mailOptions);
+        await secureTransporter.sendMail(mailOptions);
         return NextResponse.json({ success: true });
       } catch (fallbackError) {
         throw fallbackError;
       }
     }
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: 'Failed to send message' },
       { status: 500 }
