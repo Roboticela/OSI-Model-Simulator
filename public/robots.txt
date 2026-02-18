@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+
+# Disallow private/internal files
+Disallow: /src/
+Disallow: /node_modules/
+Disallow: /.env
+Disallow: /src-tauri/
+
+Sitemap: app.osi-model-simulator.roboticela.com
+

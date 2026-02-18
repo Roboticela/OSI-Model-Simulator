@@ -1,0 +1,7 @@
+JDK17
+noede24
+Android SDK Platform 34 or 35
+Android SDK Build-Tools 34.0.0+
+NDK
+Command-line tools
+Java 17 or 21
