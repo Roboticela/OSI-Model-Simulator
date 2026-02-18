@@ -14,14 +14,9 @@ const PROTOCOL_PORTS: Record<string, number> = {
 };
 
 const PROTOCOL_TCP = 6;
-const PROTOCOL_UDP = 17;
 
 function strToBytes(s: string): number[] {
   return Array.from(new TextEncoder().encode(s));
-}
-
-function bytesToHex(bytes: number[]): string {
-  return bytes.map((b) => b.toString(16).padStart(2, "0")).join(" ");
 }
 
 function bytesToHexCompact(bytes: number[]): string {
@@ -91,7 +86,6 @@ function buildLayer7(config: OSISimulationConfig): { bytes: number[]; human: str
   } else if (protocol === "dns") {
     const qname = "example.com";
     requestText = `DNS Query: ${qname} A IN`; // Simplified; real DNS is binary
-    const bytes = strToBytes(requestText);
     fields.push({ name: "Query", value: qname });
     fields.push({ name: "Type", value: "A" });
     fields.push({ name: "Class", value: "IN" });
@@ -172,7 +166,6 @@ function buildLayer4(
   const flags = 0x18; // PSH + ACK
   const window = 65535;
   const checksum = 0xb1c2; // placeholder
-  const urgent = 0;
 
   const header = new Array(20).fill(0);
   writeU16BE(header, 0, srcPort);
@@ -254,7 +247,7 @@ function buildLayer3(
 
 /** Layer 2 – Data Link: Ethernet II frame (14 byte header + 4 FCS) */
 function buildLayer2(
-  config: OSISimulationConfig,
+  _config: OSISimulationConfig,
   payload: number[]
 ): { bytes: number[]; fields: HeaderField[] } {
   const destMAC = [0x00, 0x1a, 0x2b, 0x3c, 0x4d, 0x5e];

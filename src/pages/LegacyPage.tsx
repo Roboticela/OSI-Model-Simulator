@@ -1,4 +1,3 @@
-import React from "react";
 import { Link } from "react-router-dom";
 import OSISimulator from "../components/lagacy/OSISimulator";
 import AnimatedTitle from "../components/lagacy/AnimatedTitle";

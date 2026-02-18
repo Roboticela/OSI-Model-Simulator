@@ -26,7 +26,6 @@ import {
   Network,
   Link,
   Radio,
-  X,
   Zap,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";

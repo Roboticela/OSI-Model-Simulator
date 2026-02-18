@@ -113,7 +113,7 @@ export default function OSISimulator() {
   const [showContinueButton, setShowContinueButton] = useState(false);
   const [showRestartButton, setShowRestartButton] = useState(false);
   
-  const autoStepIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const autoStepIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   
   const simulationContainerRef = useRef<HTMLDivElement>(null);
 
