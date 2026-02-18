@@ -53,25 +53,29 @@ export default function LegacyPage() {
                 Learn about OSI
               </a>
               <ThemeToggle />
-              <Link
-                to="/contact"
+              <a
+                href="https://roboticela.com/contact"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="hidden md:flex items-center px-6 py-2.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors"
               >
                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
                 Contact Us
-              </Link>
+              </a>
             </div>
-            <Link
-              to="/contact"
+            <a
+              href="https://roboticela.com/contact"
+              target="_blank"
+              rel="noopener noreferrer"
               className="flex md:hidden lg:hidden items-center px-6 py-2.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors"
             >
               <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
               Contact Us
-            </Link>
+            </a>
           </div>
         </header>
 
@@ -82,9 +86,10 @@ export default function LegacyPage() {
         <footer className="mt-16 text-center text-sm text-gray-500 dark:text-gray-400">
           <p>© {new Date().getFullYear()} Roboticela. All rights reserved.</p>
           <div className="mt-2 flex justify-center space-x-4">
-            <Link to="/privacy" className="hover:text-gray-700 dark:hover:text-gray-300">Privacy Policy</Link>
-            <Link to="/terms" className="hover:text-gray-700 dark:hover:text-gray-300">Terms of Service</Link>
-            <Link to="/contact" className="hover:text-gray-700 dark:hover:text-gray-300">Contact Us</Link>
+            <a href="https://roboticela.com/support" target="_blank" rel="noopener noreferrer" className="hover:text-gray-700 dark:hover:text-gray-300">Support</a>
+            <a href="https://roboticela.com/privacy" target="_blank" rel="noopener noreferrer" className="hover:text-gray-700 dark:hover:text-gray-300">Privacy Policy</a>
+            <a href="https://roboticela.com/terms" target="_blank" rel="noopener noreferrer" className="hover:text-gray-700 dark:hover:text-gray-300">Terms of Service</a>
+            <a href="https://roboticela.com/contact" target="_blank" rel="noopener noreferrer" className="hover:text-gray-700 dark:hover:text-gray-300">Contact Us</a>
           </div>
           <p className="mt-2">
             <a

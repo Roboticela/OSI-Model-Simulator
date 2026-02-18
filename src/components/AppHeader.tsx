@@ -654,8 +654,7 @@ export default function AppHeader() {
                   <DropdownMenuItem
                     className="flex items-center gap-3 cursor-pointer"
                     onClick={() => {
-                      const siteUrl = import.meta.env.VITE_SITE_URL || "https://app.osi-model-simulator.roboticela.com";
-                      openLink(`${siteUrl}/support`, { openInNewTab: true });
+                      openLink("https://roboticela.com/support", { openInNewTab: true });
                     }}
                   >
                     <HelpCircle className="w-4 h-4" />
@@ -681,8 +680,7 @@ export default function AppHeader() {
                   <DropdownMenuItem
                     className="flex items-center gap-3 cursor-pointer"
                     onClick={() => {
-                      const siteUrl = import.meta.env.VITE_SITE_URL || "https://app.osi-model-simulator.roboticela.com";
-                      openLink(`${siteUrl}/privacy`, { openInNewTab: true });
+                      openLink("https://roboticela.com/privacy", { openInNewTab: true });
                     }}
                   >
                     <Shield className="w-4 h-4" />
@@ -699,8 +697,7 @@ export default function AppHeader() {
                   <DropdownMenuItem
                     className="flex items-center gap-3 cursor-pointer"
                     onClick={() => {
-                      const siteUrl = import.meta.env.VITE_SITE_URL || "https://app.osi-model-simulator.roboticela.com";
-                      openLink(`${siteUrl}/terms`, { openInNewTab: true });
+                      openLink("https://roboticela.com/terms", { openInNewTab: true });
                     }}
                   >
                     <Scale className="w-4 h-4" />
