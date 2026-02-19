@@ -245,7 +245,7 @@ export default function AppHeader() {
                 </Button>
               </motion.div>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48 rounded-xl">
+            <DropdownMenuContent align="end" className="w-[9.6rem] rounded-xl max-h-[80vh] overflow-y-auto">
               <AnimatePresence>
                 {MEDIUM_OPTIONS.map((opt, index) => {
                   const Icon = opt.Icon;
@@ -287,7 +287,7 @@ export default function AppHeader() {
                 </Button>
               </motion.div>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48 rounded-xl">
+            <DropdownMenuContent align="end" className="w-[9.6rem] rounded-xl max-h-[80vh] overflow-y-auto">
               <AnimatePresence>
                 {PROTOCOL_OPTIONS.map((opt, index) => {
                   const Icon = opt.Icon;
@@ -364,7 +364,7 @@ export default function AppHeader() {
                 </Button>
               </motion.div>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48 rounded-xl">
+            <DropdownMenuContent align="end" className="w-[9.6rem] rounded-xl max-h-[80vh] overflow-y-auto">
               <AnimatePresence>
                 {SPEED_OPTIONS.map((opt, index) => {
                   const Icon = opt.Icon;
@@ -415,7 +415,7 @@ export default function AppHeader() {
                 </Button>
               </motion.div>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48 rounded-xl">
+            <DropdownMenuContent align="end" className="w-[9.6rem] rounded-xl max-h-[80vh] overflow-y-auto">
               <AnimatePresence>
                 {themes.map((t, index) => (
                   <motion.div
@@ -450,7 +450,7 @@ export default function AppHeader() {
                 </Button>
               </motion.div>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48 rounded-xl">
+            <DropdownMenuContent align="end" className="w-[9.6rem] rounded-xl max-h-[80vh] overflow-y-auto">
               {menuButtons.length > 0 && (
                 <>
                   {menuButtons.includes("medium") && (
@@ -458,7 +458,7 @@ export default function AppHeader() {
                       <MediumIcon className="w-4 h-4" />
                       <span>Medium</span>
                       <DropdownMenuSub>
-                        <DropdownMenuSubContent className="w-48 rounded-xl">
+                        <DropdownMenuSubContent className="w-[9.6rem] rounded-xl max-h-[80vh] overflow-y-auto">
                           {MEDIUM_OPTIONS.map((opt) => {
                             const Icon = opt.Icon;
                             return (
@@ -482,7 +482,7 @@ export default function AppHeader() {
                       <ProtocolIcon className="w-4 h-4" />
                       <span>Protocol</span>
                       <DropdownMenuSub>
-                        <DropdownMenuSubContent className="w-48 rounded-xl">
+                        <DropdownMenuSubContent className="w-[9.6rem] rounded-xl max-h-[80vh] overflow-y-auto">
                           {PROTOCOL_OPTIONS.map((opt) => {
                             const Icon = opt.Icon;
                             return (
@@ -529,7 +529,7 @@ export default function AppHeader() {
                       <SpeedIcon className="w-4 h-4" />
                       <span>Speed</span>
                       <DropdownMenuSub>
-                        <DropdownMenuSubContent className="w-48 rounded-xl">
+                        <DropdownMenuSubContent className="w-[9.6rem] rounded-xl max-h-[80vh] overflow-y-auto">
                           {SPEED_OPTIONS.map((opt) => {
                             const Icon = opt.Icon;
                             return (
@@ -559,7 +559,7 @@ export default function AppHeader() {
                       <Palette className="w-4 h-4" />
                       <span>Theme</span>
                       <DropdownMenuSub>
-                        <DropdownMenuSubContent className="w-48 rounded-xl">
+                        <DropdownMenuSubContent className="w-[9.6rem] rounded-xl max-h-[80vh] overflow-y-auto">
                           {themes.map((t) => (
                             <DropdownMenuItem
                               key={t.name}

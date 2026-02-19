@@ -155,7 +155,7 @@ export default function OSIInputForm() {
         </div>
       </div>
 
-      <div className="flex flex-col gap-2 pt-2 flex-shrink-0 border-t border-border/50">
+      <div className="flex flex-col gap-2 pt-2 pb-8 flex-shrink-0 border-t border-border/50">
         <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
           <Button
             variant="default"

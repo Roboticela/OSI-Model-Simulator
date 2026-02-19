@@ -29,7 +29,7 @@ import {
   Zap,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import SignalVisualization from "./SignalVisualization";
+import NetworkWaveformGraph from "./NetworkWaveformGraph";
 
 /** Scroll speed in pixels per second (duration is then derived from actual scroll height) */
 const SCROLL_PX_PER_SEC: Record<string, number> = {
@@ -1165,7 +1165,7 @@ export default function OSIVisualization() {
                                 ? "Electrical (or optical/radio) representation of the frame as received at Layer 1."
                                 : "Electrical (or optical/radio) representation of the frame as sent from Layer 1."}
                             </p>
-                            <SignalVisualization medium={config.medium} pduHex={displayLayerData.pduHex} />
+                            <NetworkWaveformGraph medium={config.medium} pduHex={displayLayerData.pduHex} />
                           </div>
                         )}
                       </div>
