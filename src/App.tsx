@@ -52,21 +52,22 @@ function App() {
       </AnimatePresence>
       <AppHeader />
       <div
-        className="flex flex-col md:flex-row gap-2 sm:gap-4 p-2 sm:p-4 overflow-x-hidden overflow-y-auto md:overflow-y-hidden"
-        style={{
-          height: bannerVisible ? "calc(100vh - 6rem)" : "calc(100vh - 3.5rem)",
-          maxHeight: bannerVisible ? "calc(100vh - 6rem)" : "calc(100vh - 3.5rem)",
-        }}
+        className="flex flex-col md:flex-row gap-2 sm:gap-4 p-2 sm:p-4 overflow-x-hidden overflow-y-auto md:overflow-y-hidden md:h-[calc(100vh-var(--content-offset))] md:max-h-[calc(100vh-var(--content-offset))]"
+        style={
+          {
+            "--content-offset": bannerVisible ? "6rem" : "3.5rem",
+          } as React.CSSProperties
+        }
       >
         {/* Left — Input form (same height as right) */}
-        <div className="w-full md:flex-[0.28] flex flex-col min-w-0 md:min-w-[280px] md:max-w-[360px] md:h-full md:min-h-0 md:pr-2">
+        <div className="w-full md:flex-[0.28] flex flex-col min-w-0 md:min-w-[280px] md:max-w-[360px] md:h-full md:min-h-0 md:pr-2 flex-shrink-0">
           <div className="w-full flex-1 min-h-0 flex flex-col rounded-xl border border-border bg-card/50 p-4 md:overflow-y-auto custom-scrollbar">
             <h2 className="text-lg font-semibold text-foreground mb-3">Simulation settings</h2>
             <OSIInputForm />
           </div>
         </div>
-        {/* Right — OSI visualization */}
-        <div className="w-full md:flex-1 min-w-0 md:min-w-[400px] min-h-[400px] md:h-full md:max-h-full overflow-hidden flex flex-col">
+        {/* Right — OSI visualization (on mobile: no fixed height, expands with content) */}
+        <div className="w-full md:flex-1 min-w-0 md:min-w-[400px] min-h-[280px] md:min-h-0 md:h-full md:max-h-full overflow-y-auto md:overflow-hidden flex flex-col flex-1 md:flex-initial">
           <OSIVisualization />
         </div>
       </div>

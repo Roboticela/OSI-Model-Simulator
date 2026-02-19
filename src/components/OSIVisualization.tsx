@@ -49,6 +49,9 @@ const SCROLL_DURATION_MAX_MS: Record<string, number> = {
   fast: 8000,
 };
 
+/** Pixels to scroll per Up/Down arrow key press */
+const KEYBOARD_SCROLL_STEP_PX = 100;
+
 const HANDSHAKE_STEPS = [
   { label: "SYN", desc: "Client sends SYN (synchronize) to initiate the connection.", direction: "client-to-server" as const },
   { label: "SYN-ACK", desc: "Server responds with SYN-ACK (synchronize-acknowledge).", direction: "server-to-client" as const },
@@ -246,19 +249,41 @@ export default function OSIVisualization() {
   const isNextDisabled =
     phase !== "handshake" && isReceiving && currentStep >= 7; // end of receiving chain
 
-  // Keyboard: Left = previous, Right = next (when simulation is active)
+  // Keyboard: Left/Right = prev/next layer (scroll to top); Up/Down = scroll container
   useEffect(() => {
     if (!isActive) return;
     const onKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as Node;
+      const isEditable =
+        target instanceof HTMLInputElement ||
+        target instanceof HTMLTextAreaElement ||
+        (target instanceof HTMLElement && target.isContentEditable);
+      if (isEditable) return;
+
+      const el = scrollContainerRef.current;
       if (e.key === "ArrowLeft") {
         if (!isPreviousDisabled) {
           e.preventDefault();
           handlePrevious();
+          if (el) el.scrollTop = 0;
         }
       } else if (e.key === "ArrowRight") {
         if (!isNextDisabled) {
           e.preventDefault();
           handleNext();
+          if (el) el.scrollTop = 0;
+        }
+      } else if (e.key === "ArrowUp" && el) {
+        const maxScroll = el.scrollHeight - el.clientHeight;
+        if (maxScroll > 0) {
+          e.preventDefault();
+          el.scrollTop = Math.max(0, el.scrollTop - KEYBOARD_SCROLL_STEP_PX);
+        }
+      } else if (e.key === "ArrowDown" && el) {
+        const maxScroll = el.scrollHeight - el.clientHeight;
+        if (maxScroll > 0) {
+          e.preventDefault();
+          el.scrollTop = Math.min(maxScroll, el.scrollTop + KEYBOARD_SCROLL_STEP_PX);
         }
       }
     };

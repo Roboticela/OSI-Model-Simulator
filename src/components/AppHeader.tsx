@@ -87,6 +87,8 @@ const SPEED_OPTIONS: { value: AnimationSpeed; label: string; Icon: LucideIcon }[
 ];
 
 const HEADER_BUTTON_IDS = ["medium", "protocol", "auto", "repeat", "speed", "reset", "theme"] as const;
+const MOBILE_BREAKPOINT_PX = 768;
+const HIDE_ON_MOBILE_IDS = ["auto", "repeat", "speed"];
 
 export default function AppHeader() {
   const navigate = useNavigate();
@@ -117,6 +119,7 @@ export default function AppHeader() {
   const adjustVisibleButtons = useCallback(() => {
     if (!headerRef.current || !buttonsContainerRef.current) return;
 
+    const isMobile = window.innerWidth < MOBILE_BREAKPOINT_PX;
     const headerWidth = headerRef.current.offsetWidth;
     const leftWidth = leftSectionRef.current?.offsetWidth ?? 200;
     const padding = 32;
@@ -130,7 +133,12 @@ export default function AppHeader() {
     const buttonEls = Array.from(container.children) as HTMLElement[];
 
     buttonEls.forEach((el, i) => {
-      if (i < HEADER_BUTTON_IDS.length) el.style.display = "";
+      if (i >= HEADER_BUTTON_IDS.length) return;
+      if (isMobile && HIDE_ON_MOBILE_IDS.includes(HEADER_BUTTON_IDS[i])) {
+        el.style.display = "none";
+        return;
+      }
+      el.style.display = "";
     });
     void container.offsetHeight;
 
@@ -153,6 +161,7 @@ export default function AppHeader() {
     buttonEls.forEach((el, i) => {
       if (i >= HEADER_BUTTON_IDS.length) return;
       const id = HEADER_BUTTON_IDS[i];
+      if (isMobile && HIDE_ON_MOBILE_IDS.includes(id)) return;
       const w = widths[i] + (i > 0 ? gap : 0);
       if (current + w <= available) {
         current += w;
@@ -209,7 +218,8 @@ export default function AppHeader() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.4, delay: 0.3 }}
           >
-            OSI Model Simulator
+            <span className="sm:hidden">OSI Sim</span>
+            <span className="hidden sm:inline">OSI Model Simulator</span>
           </motion.h1>
         </motion.div>
 
