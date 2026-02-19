@@ -10,7 +10,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { ZoomIn, ZoomOut, RotateCcw, Move } from "lucide-react";
+import { ZoomIn, ZoomOut, RotateCcw, Move, ChevronLeft, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
 import type { TransmissionMedium } from "../types/osi";
 import { cn } from "../lib/utils";
@@ -399,6 +399,18 @@ export default function NetworkWaveformGraph({
     setPanOffset(0);
   }, []);
 
+  const visibleWidth = waveformData.length / zoomLevel;
+  const maxPanOffset = Math.max(0, waveformData.length - visibleWidth);
+  const PAN_STEP_RATIO = 0.25;
+
+  const handlePanLeft = useCallback(() => {
+    setPanOffset((prev) => Math.min(prev + visibleWidth * PAN_STEP_RATIO, maxPanOffset));
+  }, [visibleWidth, maxPanOffset]);
+
+  const handlePanRight = useCallback(() => {
+    setPanOffset((prev) => Math.max(0, prev - visibleWidth * PAN_STEP_RATIO));
+  }, [visibleWidth]);
+
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
@@ -472,6 +484,34 @@ export default function NetworkWaveformGraph({
             )}
           >
             <ZoomIn className="w-4 h-4 text-foreground" />
+          </button>
+        </div>
+        <div className="flex items-center rounded-lg border border-border bg-card overflow-hidden">
+          <button
+            type="button"
+            onClick={handlePanRight}
+            disabled={panOffset <= 0}
+            title="Pan left"
+            aria-label="Pan left"
+            className={cn(
+              "p-2.5 transition-colors hover:bg-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-card disabled:opacity-40 disabled:pointer-events-none",
+              panOffset <= 0 && "cursor-not-allowed"
+            )}
+          >
+            <ChevronLeft className="w-4 h-4 text-foreground" />
+          </button>
+          <button
+            type="button"
+            onClick={handlePanLeft}
+            disabled={panOffset >= maxPanOffset}
+            title="Pan right"
+            aria-label="Pan right"
+            className={cn(
+              "p-2.5 transition-colors hover:bg-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-card disabled:opacity-40 disabled:pointer-events-none border-l border-border",
+              panOffset >= maxPanOffset && "cursor-not-allowed"
+            )}
+          >
+            <ChevronRight className="w-4 h-4 text-foreground" />
           </button>
         </div>
         <button
