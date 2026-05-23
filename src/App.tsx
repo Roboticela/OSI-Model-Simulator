@@ -84,7 +84,7 @@ function App() {
         )}
       </AnimatePresence>
       <AppHeader />
-      <motion.div
+      <motion.main
         className="flex flex-col md:flex-row gap-2 sm:gap-4 p-2 sm:p-4 overflow-x-hidden overflow-y-auto md:overflow-y-hidden md:h-[calc(100vh-var(--content-offset))] md:max-h-[calc(100vh-var(--content-offset))]"
         style={
           {
@@ -116,7 +116,7 @@ function App() {
         >
           <OSIVisualization />
         </motion.div>
-      </motion.div>
+      </motion.main>
     </div>
   );
 }
