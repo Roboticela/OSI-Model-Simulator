@@ -52,24 +52,14 @@
         }, 3000); // Delay by 3 seconds after load to ensure it doesn't block LCP/INP
       });
     </script>
-    <!-- Google Analytics (Deferred & Skipped for Lighthouse) -->
-    <script type="text/javascript">
-      window.addEventListener('load', function() {
-        if (/lighthouse|chrome-lighthouse/i.test(navigator.userAgent)) {
-          return; // Skip loading GA during Lighthouse audits
-        }
-        setTimeout(function() {
-          var gt = document.createElement('script');
-          gt.async = true;
-          gt.src = 'https://www.googletagmanager.com/gtag/js?id=G-8NELPL2FXP';
-          document.head.appendChild(gt);
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8NELPL2FXP"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
 
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){window.dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', 'G-8NELPL2FXP');
-        }, 3000);
-      });
+      gtag('config', 'G-8NELPL2FXP');
     </script>
   </head>
   <body>
