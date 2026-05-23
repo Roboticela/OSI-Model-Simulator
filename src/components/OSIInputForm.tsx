@@ -31,11 +31,12 @@ export default function OSIInputForm() {
       className="flex flex-col gap-4 w-full flex-1 min-h-0"
     >
       <div className="space-y-2 flex-shrink-0">
-        <label className="flex items-center gap-2 text-sm font-medium text-foreground">
+        <label htmlFor="osi-message-input" className="flex items-center gap-2 text-sm font-medium text-foreground">
           <MessageSquare className="w-4 h-4 text-primary" />
           Message
         </label>
         <textarea
+          id="osi-message-input"
           value={config.message}
           onChange={(e) => setConfig({ message: e.target.value })}
           placeholder="Enter the message to send..."
@@ -106,8 +107,9 @@ export default function OSIInputForm() {
 
       <div className="grid grid-cols-2 gap-2 flex-shrink-0">
         <div className="space-y-1">
-          <label className="text-xs font-medium text-tertiary">Source IP</label>
+          <label htmlFor="osi-source-ip-input" className="text-xs font-medium text-tertiary">Source IP</label>
           <input
+            id="osi-source-ip-input"
             type="text"
             value={config.sourceAddress ?? ""}
             onChange={(e) => setConfig({ sourceAddress: e.target.value })}
@@ -119,8 +121,9 @@ export default function OSIInputForm() {
           />
         </div>
         <div className="space-y-1">
-          <label className="text-xs font-medium text-tertiary">Destination IP</label>
+          <label htmlFor="osi-dest-ip-input" className="text-xs font-medium text-tertiary">Destination IP</label>
           <input
+            id="osi-dest-ip-input"
             type="text"
             value={config.destAddress ?? ""}
             onChange={(e) => setConfig({ destAddress: e.target.value })}

@@ -9,7 +9,7 @@
   --accent: #f5f5f5;
   --primary: #171717;
   --primary-foreground: #ffffff;
-  --tertiary: #9ca3af;
+  --tertiary: #595959;
   --font-inter: 'Inter', sans-serif;
 }
 
@@ -22,7 +22,7 @@
   --accent: #334155;
   --primary: #60a5fa;
   --primary-foreground: #0f172a;
-  --tertiary: #3b82f6;
+  --tertiary: #94a3b8;
 }
 
 /* Dark Theme */
@@ -34,7 +34,7 @@
   --accent: #2a2a2a;
   --primary: #ededed;
   --primary-foreground: #0a0a0a;
-  --tertiary: #6b7280;
+  --tertiary: #a1a1aa;
   --keyboard-buttons-color: #000000;
 }
 
@@ -47,7 +47,7 @@
   --accent: #f3f4f6;
   --primary: #171717;
   --primary-foreground: #ffffff;
-  --tertiary: #6b7280;
+  --tertiary: #595959;
 }
 
 /* Sunset Theme */
@@ -59,7 +59,7 @@
   --accent: #c2410c;
   --primary: #fb923c;
   --primary-foreground: #7c2d12;
-  --tertiary: #ea580c;
+  --tertiary: #fdba74;
 }
 
 /* Ocean Theme */
@@ -71,7 +71,7 @@
   --accent: #0891b2;
   --primary: #22d3ee;
   --primary-foreground: #164e63;
-  --tertiary: #06b6d4;
+  --tertiary: #a5f3fc;
 }
 
 /* Forest Theme */
@@ -83,7 +83,7 @@
   --accent: #15803d;
   --primary: #4ade80;
   --primary-foreground: #14532d;
-  --tertiary: #22c55e;
+  --tertiary: #a7f3d0;
 }
 
 /* Purple Dream Theme */
@@ -95,7 +95,7 @@
   --accent: #7c3aed;
   --primary: #c084fc;
   --primary-foreground: #581c87;
-  --tertiary: #a855f7;
+  --tertiary: #e9d5ff;
 }
 
 /* Midnight Theme */
@@ -107,7 +107,7 @@
   --accent: #4338ca;
   --primary: #818cf8;
   --primary-foreground: #1e1b4b;
-  --tertiary: #6366f1;
+  --tertiary: #c7d2fe;
 }
 
 @theme inline {

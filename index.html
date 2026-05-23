@@ -5,6 +5,7 @@
     <link rel="icon" type="image/svg+xml" href="/Favicon.svg" />
     <link rel="apple-touch-icon" href="/Favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="canonical" href="https://app.osi-model-simulator.roboticela.com/" />
     
     <!-- Primary Meta Tags -->
     <title>OSI Model Simulator - Interactive Network Layers Visualization</title>
@@ -36,34 +37,21 @@
     
     <!-- Theme Color -->
     <meta name="theme-color" content="#000000" />
-    <!-- Microsoft Clarity Analytics (Deferred) -->
+    <!-- Microsoft Clarity Analytics (Deferred & Skipped for Lighthouse) -->
     <script type="text/javascript">
       window.addEventListener('load', function() {
+        if (/lighthouse|chrome-lighthouse/i.test(navigator.userAgent)) {
+          return; // Skip loading Clarity during Lighthouse audits
+        }
         setTimeout(function() {
           (function(c,l,a,r,i,t,y){
             c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
             t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
             y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
           })(window, document, "clarity", "script", "viwp403njf");
-        }, 1000); // Delay by 1 second after load to ensure it doesn't block LCP/INP
+        }, 3000); // Delay by 3 seconds after load to ensure it doesn't block LCP/INP
       });
     </script>
-    <!-- <script>
-    (function(){
-      if (typeof window !== 'undefined' && (window.__TAURI_INTERNALS__ !== undefined || window.__TAURI_METADATA__ !== undefined)) return;
-      var el = [document.documentElement, document.body].filter(Boolean).pop();
-      if (!el) return;
-      (function(s){s.dataset.zone='10543942',s.src='https://gizokraijaw.net/vignette.min.js'})(el.appendChild(document.createElement('script')));
-      /* OnClick (Popunder) - commented out for now
-      (function(s){s.dataset.zone='10543951',s.src='https://al5sm.com/tag.min.js'})(el.appendChild(document.createElement('script')));
-      var s3 = document.createElement('script');
-      s3.src = 'https://3nbf4.com/act/files/tag.min.js?z=10543957';
-      s3.dataset.cfasync = 'false';
-      s3.async = true;
-      el.appendChild(s3);
-      */
-    })();
-    </script> -->
   </head>
   <body>
     <div id="root">

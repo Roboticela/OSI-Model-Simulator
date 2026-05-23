@@ -1,10 +1,6 @@
 "use client";
 
 import { useTheme, type ThemeName } from "../contexts/ThemeContext";
-import StoryModal from "../components/StoryModal";
-import AboutModal from "../components/AboutModal";
-import LicenseModal from "../components/LicenseModal";
-import OSIIntroModal from "../components/OSIIntroModal";
 import {
   Palette,
   Menu,
@@ -48,11 +44,16 @@ import {
   DropdownMenuSub,
   DropdownMenuSubContent,
 } from "../components/ui/dropdown-menu";
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useState, useCallback, useEffect, useRef, lazy, Suspense } from "react";
 import { useNavigate } from "react-router-dom";
 import { cn } from "../lib/utils";
 import { openLink } from "../lib/tauri";
 import { useOSISimulator } from "../contexts/OSISimulatorContext";
+
+const StoryModal = lazy(() => import("../components/StoryModal"));
+const AboutModal = lazy(() => import("../components/AboutModal"));
+const LicenseModal = lazy(() => import("../components/LicenseModal"));
+const OSIIntroModal = lazy(() => import("../components/OSIIntroModal"));
 
 const themes: { name: ThemeName; label: string; colors: string }[] = [
   { name: "navy", label: "Navy", colors: "bg-blue-900" },
@@ -246,6 +247,7 @@ export default function AppHeader() {
                   variant="outline"
                   size="sm"
                   className="gap-2 rounded-xl h-10 px-4 whitespace-nowrap"
+                  aria-label="Select Transmission Medium"
                 >
                   <MediumIcon className="w-4 h-4" />
                   <span className="hidden lg:inline">{currentMediumOption?.label ?? "Medium"}</span>
@@ -288,6 +290,7 @@ export default function AppHeader() {
                   variant="outline"
                   size="sm"
                   className="gap-2 rounded-xl h-10 px-4 whitespace-nowrap"
+                  aria-label="Select Protocol"
                 >
                   <ProtocolIcon className="w-4 h-4" />
                   <span className="hidden lg:inline">{currentProtocolOption?.label ?? "Protocol"}</span>
@@ -332,6 +335,7 @@ export default function AppHeader() {
                 (config.autoAnimate ?? false) && "bg-primary/10 border-primary"
               )}
               onClick={() => setConfig({ autoAnimate: !(config.autoAnimate ?? false) })}
+              aria-label="Toggle Auto Animate"
             >
               <Timer className="w-4 h-4" />
               <span className="hidden lg:inline">Auto</span>
@@ -350,6 +354,7 @@ export default function AppHeader() {
               )}
               onClick={() => setConfig({ autoRepeat: !(config.autoRepeat ?? false) })}
               disabled={!(config.autoAnimate ?? false)}
+              aria-label="Toggle Auto Repeat"
             >
               <Repeat className="w-4 h-4" />
               <span className="hidden lg:inline">Repeat</span>
@@ -365,6 +370,7 @@ export default function AppHeader() {
                   size="sm"
                   className="gap-2 rounded-xl h-10 px-4 whitespace-nowrap"
                   disabled={!(config.autoAnimate ?? false)}
+                  aria-label="Select Animation Speed"
                 >
                   <SpeedIcon className="w-4 h-4" />
                   <span className="hidden lg:inline">{currentSpeedOption?.label ?? "Speed"}</span>
@@ -406,6 +412,7 @@ export default function AppHeader() {
               size="sm"
               className="gap-2 rounded-xl h-10 px-4 whitespace-nowrap"
               onClick={handleReset}
+              aria-label="Reset Simulation"
             >
               <RotateCcw className="w-4 h-4" />
               <span className="hidden lg:inline">Reset</span>
@@ -416,7 +423,7 @@ export default function AppHeader() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} transition={{ duration: 0.2 }}>
-                <Button variant="outline" size="sm" className="gap-2 rounded-xl h-10 px-4 whitespace-nowrap">
+                <Button variant="outline" size="sm" className="gap-2 rounded-xl h-10 px-4 whitespace-nowrap" aria-label="Select Theme">
                   <Palette className="w-4 h-4" />
                   <span className="hidden lg:inline">{currentTheme?.label}</span>
                   <ChevronDown className="w-4 h-4" />
@@ -452,7 +459,7 @@ export default function AppHeader() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} transition={{ duration: 0.2 }}>
-                <Button variant="outline" size="sm" className="gap-2 rounded-xl h-10 px-4 whitespace-nowrap">
+                <Button variant="outline" size="sm" className="gap-2 rounded-xl h-10 px-4 whitespace-nowrap" aria-label="Open Menu">
                   <Menu className="w-4 h-4" />
                   <span className="hidden lg:inline">Menu</span>
                 </Button>
@@ -744,10 +751,18 @@ export default function AppHeader() {
         </motion.div>
       </motion.header>
 
-      <StoryModal isOpen={storyModalOpen} onClose={() => setStoryModalOpen(false)} />
-      <OSIIntroModal isOpen={osiIntroOpen} onClose={() => setOsiIntroOpen(false)} />
-      <AboutModal isOpen={aboutModalOpen} onClose={() => setAboutModalOpen(false)} />
-      <LicenseModal isOpen={licenseModalOpen} onClose={() => setLicenseModalOpen(false)} />
+      <Suspense fallback={null}>
+        {storyModalOpen && <StoryModal isOpen={storyModalOpen} onClose={() => setStoryModalOpen(false)} />}
+      </Suspense>
+      <Suspense fallback={null}>
+        {osiIntroOpen && <OSIIntroModal isOpen={osiIntroOpen} onClose={() => setOsiIntroOpen(false)} />}
+      </Suspense>
+      <Suspense fallback={null}>
+        {aboutModalOpen && <AboutModal isOpen={aboutModalOpen} onClose={() => setAboutModalOpen(false)} />}
+      </Suspense>
+      <Suspense fallback={null}>
+        {licenseModalOpen && <LicenseModal isOpen={licenseModalOpen} onClose={() => setLicenseModalOpen(false)} />}
+      </Suspense>
     </>
   );
 }
