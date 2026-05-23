@@ -64,23 +64,51 @@
   </head>
   <body>
     <div id="root">
+      <script>
+        (function() {
+          try {
+            var theme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', theme);
+          } catch (e) {}
+        })();
+      </script>
       <style>
+        :root {
+          --loader-bg: #0a0a0a;
+          --loader-fg: #ededed;
+          --loader-track: rgba(255,255,255,0.1);
+          --loader-thumb: #ededed;
+        }
+        [data-theme="light"] { --loader-bg: #ffffff; --loader-fg: #171717; --loader-track: rgba(0,0,0,0.1); --loader-thumb: #171717; }
+        [data-theme="navy"] { --loader-bg: #0f172a; --loader-fg: #e2e8f0; --loader-track: rgba(255,255,255,0.1); --loader-thumb: #60a5fa; }
+        [data-theme="sunset"] { --loader-bg: #7c2d12; --loader-fg: #fff7ed; --loader-track: rgba(255,255,255,0.1); --loader-thumb: #fb923c; }
+        [data-theme="ocean"] { --loader-bg: #164e63; --loader-fg: #e0f2fe; --loader-track: rgba(255,255,255,0.1); --loader-thumb: #22d3ee; }
+        [data-theme="forest"] { --loader-bg: #14532d; --loader-fg: #f0fdf4; --loader-track: rgba(255,255,255,0.1); --loader-thumb: #4ade80; }
+        [data-theme="purple"] { --loader-bg: #581c87; --loader-fg: #faf5ff; --loader-track: rgba(255,255,255,0.1); --loader-thumb: #c084fc; }
+        [data-theme="midnight"] { --loader-bg: #1e1b4b; --loader-fg: #e0e7ff; --loader-track: rgba(255,255,255,0.1); --loader-thumb: #818cf8; }
+        
+        body {
+          margin: 0;
+          background-color: var(--loader-bg);
+        }
+
         .initial-loader {
           display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: center;
           height: 100vh;
-          background-color: #0f172a;
-          color: white;
+          background-color: var(--loader-bg);
+          color: var(--loader-fg);
           font-family: system-ui, -apple-system, sans-serif;
+          transition: background-color 0.3s ease, color 0.3s ease;
         }
         .spinner {
           width: 40px;
           height: 40px;
-          border: 3px solid rgba(255,255,255,0.1);
+          border: 3px solid var(--loader-track);
           border-radius: 50%;
-          border-top-color: #60a5fa;
+          border-top-color: var(--loader-thumb);
           animation: spin 1s ease-in-out infinite;
           margin-bottom: 20px;
         }
@@ -90,10 +118,6 @@
         .sr-only {
           position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
           overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0;
-        }
-        @media (prefers-color-scheme: light) {
-          .initial-loader { background-color: #ffffff; color: #171717; }
-          .spinner { border: 3px solid rgba(0,0,0,0.1); border-top-color: #3b82f6; }
         }
       </style>
       <div class="initial-loader">
