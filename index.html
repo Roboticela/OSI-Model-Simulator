@@ -55,11 +55,46 @@
   </head>
   <body>
     <div id="root">
-      <div style="display: none; padding: 2rem; font-family: sans-serif;">
-        <h1>OSI Model Simulator - Interactive Network Layers Visualization</h1>
-        <p>An interactive web application that simulates the OSI model. Learn how data travels across the internet through seven network layers with visual examples.</p>
-        <h2>What is the OSI Model?</h2>
-        <p>The Open Systems Interconnection (OSI) model is a conceptual framework used to understand and describe how different network protocols and equipment communicate. It consists of seven layers: Application, Presentation, Session, Transport, Network, Data Link, and Physical.</p>
+      <style>
+        .initial-loader {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          height: 100vh;
+          background-color: #0f172a;
+          color: white;
+          font-family: system-ui, -apple-system, sans-serif;
+        }
+        .spinner {
+          width: 40px;
+          height: 40px;
+          border: 3px solid rgba(255,255,255,0.1);
+          border-radius: 50%;
+          border-top-color: #60a5fa;
+          animation: spin 1s ease-in-out infinite;
+          margin-bottom: 20px;
+        }
+        @keyframes spin {
+          to { transform: rotate(360deg); }
+        }
+        .sr-only {
+          position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+          overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0;
+        }
+        @media (prefers-color-scheme: light) {
+          .initial-loader { background-color: #ffffff; color: #171717; }
+          .spinner { border: 3px solid rgba(0,0,0,0.1); border-top-color: #3b82f6; }
+        }
+      </style>
+      <div class="initial-loader">
+        <div class="spinner"></div>
+        <h1 style="font-size: 1.5rem; font-weight: 600; margin: 0;">OSI Model Simulator</h1>
+        <div class="sr-only">
+          <p>An interactive web application that simulates the OSI model. Learn how data travels across the internet through seven network layers with visual examples.</p>
+          <h2>What is the OSI Model?</h2>
+          <p>The Open Systems Interconnection (OSI) model is a conceptual framework used to understand and describe how different network protocols and equipment communicate. It consists of seven layers: Application, Presentation, Session, Transport, Network, Data Link, and Physical.</p>
+        </div>
       </div>
     </div>
     <script type="module" src="/src/main.tsx"></script>
