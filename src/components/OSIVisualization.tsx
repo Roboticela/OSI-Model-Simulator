@@ -451,13 +451,9 @@ export default function OSIVisualization() {
                       onClick={() => hasEncapsulation && goToHandshake()}
                       disabled={!hasEncapsulation}
                       layout
-                      animate={{
-                        backgroundColor: isHandshake ? "var(--accent)" : "var(--card)",
-                        borderColor: isHandshake ? "var(--primary)" : "var(--border)",
-                      }}
-                      transition={{ duration: 0.2 }}
                       className={cn(
                         "rounded-xl border px-3 py-2 text-xs font-medium transition-all duration-200 inline-flex items-center gap-1.5",
+                        isHandshake ? "bg-accent border-primary" : "bg-card border-border",
                         hasEncapsulation && "cursor-pointer hover:bg-accent hover:border-primary/50 hover:shadow-md",
                         isHandshake && "ring-2 ring-primary/40 shadow-md",
                         !hasEncapsulation && "cursor-default opacity-80"
@@ -473,13 +469,9 @@ export default function OSIVisualization() {
                       onClick={() => hasEncapsulation && setShowDirectConnectionInfo(true)}
                       disabled={!hasEncapsulation}
                       layout
-                      animate={{
-                        backgroundColor: showDirectConnectionInfo ? "var(--accent)" : "var(--card)",
-                        borderColor: showDirectConnectionInfo ? "var(--primary)" : "var(--border)",
-                      }}
-                      transition={{ duration: 0.2 }}
                       className={cn(
                         "rounded-xl border px-3 py-2 text-xs font-medium transition-all duration-200 inline-flex items-center gap-1.5",
+                        showDirectConnectionInfo ? "bg-accent border-primary" : "bg-card border-border",
                         hasEncapsulation && "cursor-pointer hover:bg-accent hover:border-primary/50 hover:shadow-md",
                         showDirectConnectionInfo && "ring-2 ring-primary/40 shadow-md",
                         !hasEncapsulation && "cursor-default opacity-80"
@@ -511,13 +503,9 @@ export default function OSIVisualization() {
                             }}
                             disabled={!canClick}
                             layout
-                            animate={{
-                              backgroundColor: isCurrent ? "var(--accent)" : "var(--card)",
-                              borderColor: isCurrent ? "var(--primary)" : "var(--border)",
-                            }}
-                            transition={{ duration: 0.2 }}
                             className={cn(
                               "rounded-xl border px-3 py-2 text-xs font-medium transition-all duration-200 inline-flex items-center gap-1.5",
+                              isCurrent ? "bg-accent border-primary" : "bg-card border-border",
                               canClick && "cursor-pointer hover:bg-accent hover:border-primary/50 hover:shadow-md",
                               isCurrent && "ring-2 ring-primary/40 shadow-md",
                               !canClick && "cursor-default opacity-80"
@@ -608,13 +596,9 @@ export default function OSIVisualization() {
                             }}
                             disabled={!canClick}
                             layout
-                            animate={{
-                              backgroundColor: isCurrent ? "var(--accent)" : "var(--card)",
-                              borderColor: isCurrent ? "var(--primary)" : "var(--border)",
-                            }}
-                            transition={{ duration: 0.2 }}
                             className={cn(
                               "rounded-xl border px-3 py-2 text-xs font-medium transition-all duration-200 inline-flex items-center gap-1.5",
+                              isCurrent ? "bg-accent border-primary" : "bg-card border-border",
                               canClick && "cursor-pointer hover:bg-accent hover:border-primary/50 hover:shadow-md",
                               isCurrent && "ring-2 ring-primary/40 shadow-md",
                               !canClick && "cursor-default opacity-80"

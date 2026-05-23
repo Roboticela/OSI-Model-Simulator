@@ -662,8 +662,9 @@ function FiberAnimation() {
           <motion.div
             key={i}
             className="absolute w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_var(--primary)]"
-            style={{ left: 0, top: "50%", transform: "translate(-50%, -50%)" }}
-            animate={{ left: "100%" }}
+            style={{ top: "50%", translateX: "-50%", translateY: "-50%" }}
+            initial={{ x: "-100%" }}
+            animate={{ x: "8400%" }}
             transition={{ duration: 1.8, repeat: Infinity, delay: i * 0.15, ease: "linear" }}
           />
         ))}

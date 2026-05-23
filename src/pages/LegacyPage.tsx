@@ -4,6 +4,8 @@ import OSISimulator from "../components/lagacy/OSISimulator";
 import AnimatedTitle from "../components/lagacy/AnimatedTitle";
 import ThemeToggle from "../components/lagacy/ThemeToggle";
 import { updateSEO } from "../utils/seo";
+import "../legacy.css";
+
 
 export default function LegacyPage() {
   useEffect(() => {
