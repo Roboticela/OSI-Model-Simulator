@@ -7,9 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <!-- Primary Meta Tags -->
-    <title>OSI Model Simulator</title>
-    <meta name="title" content="OSI Model Simulator" />
-    <meta name="description" content="An interactive app that simulates the OSI model and shows how messages travel on the internet through the seven layers—from application to physical." />
+    <title>OSI Model Simulator - Interactive Network Layers Visualization</title>
+    <meta name="title" content="OSI Model Simulator - Interactive Network Layers Visualization" />
+    <meta name="description" content="An interactive web application that simulates the OSI model. Learn how data travels across the internet through seven network layers with visual examples." />
     <meta name="keywords" content="OSI model, network layers, internet, message transmission, TCP/IP, data encapsulation, networking, Roboticela" />
     <meta name="author" content="Roboticela" />
     <meta name="robots" content="index, follow" />
@@ -17,8 +17,8 @@
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="OSI Model Simulator" />
-    <meta property="og:description" content="An interactive app that simulates the OSI model and shows how messages travel on the internet through the seven layers." />
+    <meta property="og:title" content="OSI Model Simulator - Interactive Network Layers Visualization" />
+    <meta property="og:description" content="An interactive web application that simulates the OSI model. Learn how data travels across the internet through seven network layers with visual examples." />
     <meta property="og:image" content="https://app.osi-model-simulator.roboticela.com/Favicon.svg" />
     <meta property="og:image:type" content="image/svg+xml" />
     <meta property="og:image:width" content="512" />
@@ -29,20 +29,24 @@
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:title" content="OSI Model Simulator" />
-    <meta property="twitter:description" content="An interactive app that simulates the OSI model and shows how messages travel on the internet through the seven layers." />
+    <meta property="twitter:title" content="OSI Model Simulator - Interactive Network Layers Visualization" />
+    <meta property="twitter:description" content="An interactive web application that simulates the OSI model. Learn how data travels across the internet through seven network layers with visual examples." />
     <meta property="twitter:image" content="https://app.osi-model-simulator.roboticela.com/Favicon.svg" />
     <meta property="twitter:image:alt" content="OSI Model Simulator" />
     
     <!-- Theme Color -->
     <meta name="theme-color" content="#000000" />
-    <!-- Microsoft Clarity Analytics -->
+    <!-- Microsoft Clarity Analytics (Deferred) -->
     <script type="text/javascript">
-      (function(c,l,a,r,i,t,y){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-      })(window, document, "clarity", "script", "viwp403njf");
+      window.addEventListener('load', function() {
+        setTimeout(function() {
+          (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+          })(window, document, "clarity", "script", "viwp403njf");
+        }, 1000); // Delay by 1 second after load to ensure it doesn't block LCP/INP
+      });
     </script>
     <!-- <script>
     (function(){
@@ -62,7 +66,14 @@
     </script> -->
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div style="display: none; padding: 2rem; font-family: sans-serif;">
+        <h1>OSI Model Simulator - Interactive Network Layers Visualization</h1>
+        <p>An interactive web application that simulates the OSI model. Learn how data travels across the internet through seven network layers with visual examples.</p>
+        <h2>What is the OSI Model?</h2>
+        <p>The Open Systems Interconnection (OSI) model is a conceptual framework used to understand and describe how different network protocols and equipment communicate. It consists of seven layers: Application, Presentation, Session, Transport, Network, Data Link, and Physical.</p>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
