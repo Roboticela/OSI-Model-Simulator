@@ -41,7 +41,10 @@ function App() {
   });
 
   useEffect(() => {
-    window.dispatchEvent(new CustomEvent("open-osi-intro"));
+    const timer = setTimeout(() => {
+      window.dispatchEvent(new CustomEvent("open-osi-intro"));
+    }, 5000);
+    return () => clearTimeout(timer);
   }, []);
 
   const closeBanner = useCallback(() => {
