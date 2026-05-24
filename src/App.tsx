@@ -8,6 +8,7 @@ import OSIVisualization from "./components/OSIVisualization";
 import { updateSEO } from "./utils/seo";
 import { DISMISSAL_KEYS, isDismissed } from "./lib/dismissals";
 import GamesPromoPopup from "./components/GamesPromoPopup";
+import GamesQuickLink from "./components/GamesQuickLink";
 
 const LEGACY_BANNER_STORAGE_KEY = DISMISSAL_KEYS.legacyBanner;
 
@@ -110,6 +111,7 @@ function App() {
           <div ref={leftContainerRef} className="w-full flex-1 min-h-0 flex flex-col rounded-xl border border-border bg-card/50 p-4 md:overflow-y-auto custom-scrollbar">
             <h2 className="text-lg font-semibold text-foreground mb-3">Simulation settings</h2>
             <OSIInputForm />
+            <GamesQuickLink />
           </div>
         </motion.div>
         {/* Right — OSI visualization (on mobile: no fixed height, expands with content) */}

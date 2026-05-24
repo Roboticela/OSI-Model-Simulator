@@ -12,7 +12,8 @@ export default defineConfig({
       hostname: 'https://app.osi-model-simulator.roboticela.com',
       dynamicRoutes: [
         '/',
-        '/legacy'
+        '/legacy',
+        '/quiz'
       ]
     })
   ],
