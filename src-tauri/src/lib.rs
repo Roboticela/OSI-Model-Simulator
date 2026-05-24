@@ -17,7 +17,8 @@ fn write_file(path: String, data: String) -> Result<(), String> {
 pub fn run() {
   let mut builder = tauri::Builder::default()
     .plugin(tauri_plugin_dialog::init())
-    .plugin(tauri_plugin_opener::init());
+    .plugin(tauri_plugin_opener::init())
+    .plugin(tauri_plugin_sql::Builder::default().build());
 
   #[cfg(desktop)]
   {

@@ -31,6 +31,7 @@ import {
   Zap,
   Repeat,
   History,
+  Gamepad2,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type { TransmissionMedium, ProtocolType, AnimationSpeed } from "../types/osi";
@@ -49,11 +50,13 @@ import { useNavigate } from "react-router-dom";
 import { cn } from "../lib/utils";
 import { openLink } from "../lib/tauri";
 import { useOSISimulator } from "../contexts/OSISimulatorContext";
+import { DISMISSAL_KEYS, isDismissed, setDismissed } from "../lib/dismissals";
 
 const StoryModal = lazy(() => import("../components/StoryModal"));
 const AboutModal = lazy(() => import("../components/AboutModal"));
 const LicenseModal = lazy(() => import("../components/LicenseModal"));
 const OSIIntroModal = lazy(() => import("../components/OSIIntroModal"));
+const HelpModal = lazy(() => import("../components/HelpModal"));
 
 const themes: { name: ThemeName; label: string; colors: string }[] = [
   { name: "navy", label: "Navy", colors: "bg-blue-900" },
@@ -100,11 +103,20 @@ export default function AppHeader() {
   const [aboutModalOpen, setAboutModalOpen] = useState(false);
   const [licenseModalOpen, setLicenseModalOpen] = useState(false);
   const [osiIntroOpen, setOsiIntroOpen] = useState(false);
+  const [helpModalOpen, setHelpModalOpen] = useState(false);
 
   useEffect(() => {
-    const openOsiIntro = () => setOsiIntroOpen(true);
+    const openOsiIntro = () => {
+      if (isDismissed(DISMISSAL_KEYS.osiIntro)) return;
+      setOsiIntroOpen(true);
+    };
     window.addEventListener("open-osi-intro" as any, openOsiIntro);
     return () => window.removeEventListener("open-osi-intro" as any, openOsiIntro);
+  }, []);
+
+  const closeOsiIntro = useCallback(() => {
+    setDismissed(DISMISSAL_KEYS.osiIntro);
+    setOsiIntroOpen(false);
   }, []);
   const [menuButtons, setMenuButtons] = useState<string[]>([]);
 
@@ -595,11 +607,26 @@ export default function AppHeader() {
               )}
               <AnimatePresence>
                 <motion.div
-                  key="story"
+                  key="help"
                   initial={{ opacity: 0, y: -8 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
                   transition={{ duration: 0.2, delay: 0 }}
+                >
+                  <DropdownMenuItem
+                    className="flex items-center gap-3 cursor-pointer"
+                    onClick={() => setHelpModalOpen(true)}
+                  >
+                    <HelpCircle className="w-4 h-4" />
+                    <span>Help</span>
+                  </DropdownMenuItem>
+                </motion.div>
+                <motion.div
+                  key="story"
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.2, delay: 0.01 }}
                 >
                   <DropdownMenuItem
                     className="flex items-center gap-3 cursor-pointer"
@@ -614,7 +641,7 @@ export default function AppHeader() {
                   initial={{ opacity: 0, y: -8 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
-                  transition={{ duration: 0.2, delay: 0.01 }}
+                  transition={{ duration: 0.2, delay: 0.02 }}
                 >
                   <DropdownMenuItem
                     className="flex items-center gap-3 cursor-pointer"
@@ -629,7 +656,7 @@ export default function AppHeader() {
                   initial={{ opacity: 0, y: -8 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
-                  transition={{ duration: 0.2, delay: 0.02 }}
+                  transition={{ duration: 0.2, delay: 0.03 }}
                 >
                   <DropdownMenuItem
                     className="flex items-center gap-3 cursor-pointer"
@@ -637,6 +664,21 @@ export default function AppHeader() {
                   >
                     <History className="w-4 h-4" />
                     <span>Legacy version</span>
+                  </DropdownMenuItem>
+                </motion.div>
+                <motion.div
+                  key="quiz"
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.2, delay: 0.025 }}
+                >
+                  <DropdownMenuItem
+                    className="flex items-center gap-3 cursor-pointer"
+                    onClick={() => navigate("/quiz")}
+                  >
+                    <Gamepad2 className="w-4 h-4" />
+                    <span>Games</span>
                   </DropdownMenuItem>
                 </motion.div>
                 <motion.div
@@ -755,7 +797,10 @@ export default function AppHeader() {
         {storyModalOpen && <StoryModal isOpen={storyModalOpen} onClose={() => setStoryModalOpen(false)} />}
       </Suspense>
       <Suspense fallback={null}>
-        {osiIntroOpen && <OSIIntroModal isOpen={osiIntroOpen} onClose={() => setOsiIntroOpen(false)} />}
+        {helpModalOpen && <HelpModal isOpen={helpModalOpen} onClose={() => setHelpModalOpen(false)} />}
+      </Suspense>
+      <Suspense fallback={null}>
+        {osiIntroOpen && <OSIIntroModal isOpen={osiIntroOpen} onClose={closeOsiIntro} />}
       </Suspense>
       <Suspense fallback={null}>
         {aboutModalOpen && <AboutModal isOpen={aboutModalOpen} onClose={() => setAboutModalOpen(false)} />}

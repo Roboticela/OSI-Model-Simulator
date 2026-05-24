@@ -6,8 +6,10 @@ import AppHeader from "./components/AppHeader";
 import OSIInputForm from "./components/OSIInputForm";
 import OSIVisualization from "./components/OSIVisualization";
 import { updateSEO } from "./utils/seo";
+import { DISMISSAL_KEYS, isDismissed } from "./lib/dismissals";
+import GamesPromoPopup from "./components/GamesPromoPopup";
 
-const LEGACY_BANNER_STORAGE_KEY = "osi-legacy-banner-dismissed";
+const LEGACY_BANNER_STORAGE_KEY = DISMISSAL_KEYS.legacyBanner;
 
 function App() {
   const leftContainerRef = useRef<HTMLDivElement>(null);
@@ -41,8 +43,11 @@ function App() {
   });
 
   useEffect(() => {
+    if (isDismissed(DISMISSAL_KEYS.osiIntro)) return;
     const timer = setTimeout(() => {
-      window.dispatchEvent(new CustomEvent("open-osi-intro"));
+      if (!isDismissed(DISMISSAL_KEYS.osiIntro)) {
+        window.dispatchEvent(new CustomEvent("open-osi-intro"));
+      }
     }, 5000);
     return () => clearTimeout(timer);
   }, []);
@@ -117,6 +122,7 @@ function App() {
           <OSIVisualization />
         </motion.div>
       </motion.main>
+      <GamesPromoPopup />
     </div>
   );
 }

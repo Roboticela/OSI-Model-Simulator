@@ -1,4 +1,4 @@
-import { StrictMode, lazy, Suspense } from 'react'
+import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import App from './App.tsx'
@@ -8,8 +8,8 @@ import { ThemeProvider } from './contexts/ThemeContext'
 import { OSISimulatorProvider } from './contexts/OSISimulatorContext'
 import { ThemeScript } from './components/ThemeScript'
 import { isTauri } from './lib/tauri'
-
-const LegacyPage = lazy(() => import('./pages/LegacyPage.tsx'))
+import QuizPage from './pages/QuizPage.tsx'
+import LegacyPage from './pages/LegacyPage.tsx'
 
 // In Tauri: disable context menu and devtools shortcuts
 if (isTauri()) {
@@ -30,20 +30,16 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ThemeScript />
     <ThemeProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<OSISimulatorProvider><App /></OSISimulatorProvider>} />
-          <Route
-            path="/legacy"
-            element={
-              <Suspense fallback={<div className="min-h-screen bg-background flex items-center justify-center text-foreground font-semibold">Loading...</div>}>
-                <LegacyPage />
-              </Suspense>
-            }
-          />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </BrowserRouter>
+      <OSISimulatorProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<App />} />
+            <Route path="/quiz" element={<QuizPage />} />
+            <Route path="/legacy" element={<LegacyPage />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </BrowserRouter>
+      </OSISimulatorProvider>
     </ThemeProvider>
   </StrictMode>,
 )
