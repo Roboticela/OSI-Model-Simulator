@@ -67,13 +67,19 @@ async function saveIndexedDBStats(stats: QuizStats): Promise<void> {
 // ---------------------------
 // SQLite (Tauri) Implementation
 // ---------------------------
-let sqlDbPromise: Promise<any> | null = null;
+type SqlDatabase = import("@tauri-apps/plugin-sql").default;
 
-async function getSqlDb() {
+interface ScoreRow {
+  high_score: number;
+  max_streak: number;
+}
+
+let sqlDbPromise: Promise<SqlDatabase> | null = null;
+
+async function getSqlDb(): Promise<SqlDatabase> {
   if (!sqlDbPromise) {
-    const { load } = await import("@tauri-apps/plugin-sql");
-    sqlDbPromise = load("sqlite:quiz_data.db").then(async (db) => {
-      // Create table if it doesn't exist
+    const Database = (await import("@tauri-apps/plugin-sql")).default;
+    sqlDbPromise = Database.load("sqlite:quiz_data.db").then(async (db) => {
       await db.execute(
         "CREATE TABLE IF NOT EXISTS scores (id TEXT PRIMARY KEY, high_score INTEGER, max_streak INTEGER)"
       );
@@ -86,7 +92,7 @@ async function getSqlDb() {
 async function getSQLiteStats(): Promise<QuizStats> {
   try {
     const db = await getSqlDb();
-    const result = await db.select<{ high_score: number; max_streak: number }[]>(
+    const result = await db.select<ScoreRow[]>(
       "SELECT high_score, max_streak FROM scores WHERE id = $1",
       [KEY_NAME]
     );
