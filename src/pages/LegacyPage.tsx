@@ -1,21 +1,11 @@
-import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import OSISimulator from "../components/lagacy/OSISimulator";
 import AnimatedTitle from "../components/lagacy/AnimatedTitle";
 import ThemeToggle from "../components/lagacy/ThemeToggle";
-import { updateSEO } from "../utils/seo";
 import "../legacy.css";
 
 
 export default function LegacyPage() {
-  useEffect(() => {
-    updateSEO({
-      title: "Legacy OSI Model Simulator - Classic Interactive Simulation",
-      description: "Try the legacy version of our OSI Model Simulator. Experience a classic step-by-step interactive networking layers visualization designed for education.",
-      canonicalUrl: "https://app.osi-model-simulator.roboticela.com/legacy",
-    });
-  }, []);
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 font-[family-name:var(--font-geist-sans)]">
       <div className="flex-shrink-0 border-b border-blue-200 dark:border-blue-800 bg-blue-50/80 dark:bg-blue-950/30">

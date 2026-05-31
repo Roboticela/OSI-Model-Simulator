@@ -1,5 +1,6 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { HelmetProvider } from 'react-helmet-async'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import App from './App.tsx'
 import GamesPromoPopup from './components/GamesPromoPopup.tsx'
@@ -8,6 +9,7 @@ import "./App.css"
 import { ThemeProvider } from './contexts/ThemeContext'
 import { OSISimulatorProvider } from './contexts/OSISimulatorContext'
 import { ThemeScript } from './components/ThemeScript'
+import { RouteSeo } from './seo'
 import { isTauri } from './lib/tauri'
 import QuizPage from './pages/QuizPage.tsx'
 import LegacyPage from './pages/LegacyPage.tsx'
@@ -29,11 +31,13 @@ if (isTauri()) {
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <ThemeScript />
-    <ThemeProvider>
-      <OSISimulatorProvider>
-        <BrowserRouter>
-          <Routes>
+    <HelmetProvider>
+      <ThemeScript />
+      <ThemeProvider>
+        <OSISimulatorProvider>
+          <BrowserRouter>
+            <RouteSeo />
+            <Routes>
             <Route
               path="/"
               element={
@@ -46,9 +50,10 @@ createRoot(document.getElementById('root')!).render(
             <Route path="/quiz" element={<QuizPage />} />
             <Route path="/legacy" element={<LegacyPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </BrowserRouter>
-      </OSISimulatorProvider>
-    </ThemeProvider>
+            </Routes>
+          </BrowserRouter>
+        </OSISimulatorProvider>
+      </ThemeProvider>
+    </HelmetProvider>
   </StrictMode>,
 )

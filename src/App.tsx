@@ -5,20 +5,11 @@ import { X } from "lucide-react";
 import AppHeader from "./components/AppHeader";
 import OSIInputForm from "./components/OSIInputForm";
 import OSIVisualization from "./components/OSIVisualization";
-import { updateSEO } from "./utils/seo";
 import { DISMISSAL_KEYS, isDismissed } from "./lib/dismissals";
 
 const LEGACY_BANNER_STORAGE_KEY = DISMISSAL_KEYS.legacyBanner;
 
 function App() {
-  useEffect(() => {
-    updateSEO({
-      title: "OSI Model Simulator - Interactive Network Layers Visualization",
-      description: "An interactive web application that simulates the OSI model. Learn how data travels across the internet through seven network layers with visual examples.",
-      canonicalUrl: "https://app.osi-model-simulator.roboticela.com/",
-    });
-  }, []);
-
   const [bannerVisible, setBannerVisible] = useState(() => {
     if (typeof window === "undefined") return true;
     return localStorage.getItem(LEGACY_BANNER_STORAGE_KEY) !== "true";

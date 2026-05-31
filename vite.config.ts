@@ -2,6 +2,8 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import Sitemap from 'vite-plugin-sitemap'
+import { prerenderSeoPlugin } from './scripts/prerender-seo-plugin'
+import { PRERENDER_PATHS } from './src/seo/routes'
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -10,12 +12,9 @@ export default defineConfig({
     tailwindcss(),
     Sitemap({
       hostname: 'https://app.osi-model-simulator.roboticela.com',
-      dynamicRoutes: [
-        '/',
-        '/legacy',
-        '/quiz'
-      ]
-    })
+      dynamicRoutes: [...PRERENDER_PATHS],
+    }),
+    prerenderSeoPlugin(),
   ],
   build: {
     target: 'esnext',
