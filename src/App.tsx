@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
@@ -7,35 +7,16 @@ import OSIInputForm from "./components/OSIInputForm";
 import OSIVisualization from "./components/OSIVisualization";
 import { updateSEO } from "./utils/seo";
 import { DISMISSAL_KEYS, isDismissed } from "./lib/dismissals";
-import GamesPromoPopup from "./components/GamesPromoPopup";
-import GamesQuickLink from "./components/GamesQuickLink";
 
 const LEGACY_BANNER_STORAGE_KEY = DISMISSAL_KEYS.legacyBanner;
 
 function App() {
-  const leftContainerRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     updateSEO({
       title: "OSI Model Simulator - Interactive Network Layers Visualization",
       description: "An interactive web application that simulates the OSI model. Learn how data travels across the internet through seven network layers with visual examples.",
       canonicalUrl: "https://app.osi-model-simulator.roboticela.com/",
     });
-  }, []);
-
-  useEffect(() => {
-    const el = leftContainerRef.current;
-    if (!el) return;
-    const scrollToBottom = () => {
-      el.scrollTop = el.scrollHeight - el.clientHeight;
-    };
-    scrollToBottom();
-    const t = requestAnimationFrame(scrollToBottom);
-    const t2 = setTimeout(scrollToBottom, 100);
-    return () => {
-      cancelAnimationFrame(t);
-      clearTimeout(t2);
-    };
   }, []);
 
   const [bannerVisible, setBannerVisible] = useState(() => {
@@ -108,10 +89,9 @@ function App() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5, delay: 0.15 }}
         >
-          <div ref={leftContainerRef} className="w-full flex-1 min-h-0 flex flex-col rounded-xl border border-border bg-card/50 p-4 md:overflow-y-auto custom-scrollbar">
+          <div className="w-full flex-1 min-h-0 flex flex-col rounded-xl border border-border bg-card/50 p-4 md:overflow-y-auto custom-scrollbar">
             <h2 className="text-lg font-semibold text-foreground mb-3">Simulation settings</h2>
             <OSIInputForm />
-            <GamesQuickLink />
           </div>
         </motion.div>
         {/* Right — OSI visualization (on mobile: no fixed height, expands with content) */}
@@ -124,7 +104,6 @@ function App() {
           <OSIVisualization />
         </motion.div>
       </motion.main>
-      <GamesPromoPopup />
     </div>
   );
 }

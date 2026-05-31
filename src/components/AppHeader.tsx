@@ -468,18 +468,6 @@ export default function AppHeader() {
           </div>
           </div>
           <div ref={menuButtonRef} className="flex items-center gap-2">
-          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} transition={{ duration: 0.2 }}>
-            <Button
-              variant="outline"
-              size="sm"
-              className="gap-2 rounded-xl h-10 px-4 whitespace-nowrap border-primary/30 hover:border-primary/50 hover:bg-primary/10"
-              onClick={() => navigate("/quiz")}
-              aria-label="Play Games"
-            >
-              <Gamepad2 className="w-4 h-4 text-primary" />
-              <span className="hidden lg:inline">Games</span>
-            </Button>
-          </motion.div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} transition={{ duration: 0.2 }}>

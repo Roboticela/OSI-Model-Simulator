@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Gamepad2 } from "lucide-react";
@@ -9,6 +10,11 @@ const SHOW_DELAY_MS = 30_000;
 
 export default function GamesPromoPopup() {
   const [visible, setVisible] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (isDismissed(DISMISSAL_KEYS.gamesPromo)) return;
@@ -27,17 +33,25 @@ export default function GamesPromoPopup() {
     setVisible(false);
   };
 
-  return (
+  if (!mounted) return null;
+
+  return createPortal(
     <AnimatePresence>
       {visible && (
-        <motion.aside
-          initial={{ opacity: 0, y: 16, scale: 0.96 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: 16, scale: 0.96 }}
-          transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
-          className="fixed bottom-4 right-4 z-50 w-[min(100vw-2rem,320px)] rounded-xl border border-border bg-card shadow-lg p-4"
+        <motion.div
           role="dialog"
           aria-label="Try networking games"
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 16 }}
+          transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+          className="fixed z-[100] w-[min(calc(100vw-2rem),20rem)] rounded-xl border border-border bg-card shadow-lg p-4"
+          style={{
+            bottom: "max(1rem, env(safe-area-inset-bottom))",
+            right: "max(1rem, env(safe-area-inset-right))",
+            left: "auto",
+            top: "auto",
+          }}
         >
           <button
             type="button"
@@ -52,7 +66,7 @@ export default function GamesPromoPopup() {
             <div className="w-10 h-10 rounded-lg border border-primary/20 bg-primary/10 flex items-center justify-center flex-shrink-0">
               <Gamepad2 className="w-5 h-5 text-primary" />
             </div>
-            <div>
+            <div className="min-w-0">
               <p className="font-semibold text-foreground mb-1">Try Games</p>
               <p className="text-sm text-tertiary leading-snug mb-3">
                 Test your networking knowledge with quizzes, port matching, and more.
@@ -64,8 +78,9 @@ export default function GamesPromoPopup() {
               </Link>
             </div>
           </div>
-        </motion.aside>
+        </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   );
 }

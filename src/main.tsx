@@ -2,6 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import App from './App.tsx'
+import GamesPromoPopup from './components/GamesPromoPopup.tsx'
 import "./App.css"
 
 import { ThemeProvider } from './contexts/ThemeContext'
@@ -33,7 +34,15 @@ createRoot(document.getElementById('root')!).render(
       <OSISimulatorProvider>
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<App />} />
+            <Route
+              path="/"
+              element={
+                <>
+                  <App />
+                  <GamesPromoPopup />
+                </>
+              }
+            />
             <Route path="/quiz" element={<QuizPage />} />
             <Route path="/legacy" element={<LegacyPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
